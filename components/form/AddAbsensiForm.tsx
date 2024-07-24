@@ -51,7 +51,7 @@ const AddDataAbsensi = ({ dataPegawai }: AddDataAbsensiProps) => {
                 <div className="flex flex-col space-y-2">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="pegawai">Nama:</Label>
-                        <Select value={selectedPegawai} onValueChange={handleSelectChange} name="pegawai" id="pegawai">
+                        <Select value={selectedPegawai} onValueChange={handleSelectChange} name="pegawai">
                             <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full">
                                 <SelectValue placeholder="Pegawai" />
                             </SelectTrigger>
