@@ -2,13 +2,14 @@ import { getAbsensiById } from '@/action/user';
 import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import EditDataAbsensi from '@/components/form/EditAbsensiForm';
+import { User } from '@prisma/client';
 
 const EditPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
     const user = session?.user;
     if (!user) {
         redirect('/login');
-    } else if (user.role !== 'ADMIN') {
+    } else if ((user as User).role !== 'ADMIN') {
         redirect('/');
     }
 

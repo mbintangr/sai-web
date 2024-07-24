@@ -2,13 +2,14 @@ import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import { fetchAllGolongan } from '@/action/golongan';
 import AddDataPegawai from '@/components/form/AddPegawaiForm';
+import { User } from '@prisma/client';
 
 const CreatePegawaiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
     const user = session?.user;
     if (!user) {
         redirect('/login');
-    } else if (user.role !== 'ADMIN') {
+    } else if ((user as User).role !== 'ADMIN') {
         redirect('/');
     }
 

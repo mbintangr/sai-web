@@ -54,7 +54,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   pegawaiId Int
-  role      UserRole? @default(PEGAWAI)
+  role      UserRole  @default(PEGAWAI)
 
   pegawai Pegawai @relation(fields: [pegawaiId], references: [id])
 }

@@ -1,103 +1,68 @@
-import NextAuth, { CredentialsSignin } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { db } from "./lib/db"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { db } from "./lib/db";
+import { User, UserRole } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: "username", type: "text" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
+        const username = credentials?.username;
+        const password = credentials?.password;
 
-        // get username and password from credentials that we got from the signin form
-        const username = credentials.username as string | undefined
-        const password = credentials.password as string | undefined
-
-        // check if username and password are not empty
         if (!username || !password) {
-          throw new CredentialsSignin('Please provide username and password!')
+          throw new Error('Please provide username and password!');
         }
 
-        // check if user exists
         const user = await db.user.findUnique({
-          where: {
-            username
-          },
-          select: {
-            username: true,
-            password: true,
-            pegawaiId: true,
-            role: true,
-            id: true,
-          }
-        })
+          where: { username: username.toString() },
+          select: { id: true, username: true, password: true, pegawaiId: true, role: true }
+        });
 
-        console.log(user?.pegawaiId)
-
-        // if user does not exist throw error
-        if (!user) {
-          throw new CredentialsSignin('Invalid credentials!')
+        if (!user || !user.password || user.password !== password) {
+          throw new Error('Invalid credentials!');
         }
 
-        // check if password is valid
-        if (!user.password) {
-          throw new CredentialsSignin('Invalid credentials!')
-        }
-
-        // check if password is correct
-        const passwordMatched = password === user.password
-
-        // if password is not correct throw error
-        if (!passwordMatched) {
-          throw new CredentialsSignin('Invalid credentials!')
-        }
-
-        // if everything is correct return user
-        const userData = {
-          username: user.username,
-          role: user.role,
-          pegawaiId: user.pegawaiId,
+        return { 
           id: user.id,
-        }
-
-        return userData
-
+          username: user.username,
+          pegawaiId: user.pegawaiId,
+          role: user.role 
+        };
       }
     })
   ],
   pages: {
     signIn: "/login",
-},
-
-callbacks: {
+  },
+  callbacks: {
     async session({ session, token }) {
-        if (token?.sub && token?.role) {
-            session.user.id = token.sub
-            session.user.pegawaiId = token.pegawaiId
-            session.user.role = token.role
-            return session
-        }
-        return session
+      if (token) {
+        session.user.id = token.sub as string;
+        session.user.pegawaiId = token.pegawaiId as number | undefined;
+        session.user.role = token.role as UserRole | undefined;
+      }
+      return session;
     },
-
     async jwt({ token, user }) {
-        if (user) {
-            token.role = user.role
-        }
-        return token
+      if (user) {
+        token.sub = user.id;
+        token.pegawaiId = user.pegawaiId;
+        token.role = user.role;
+      }
+      return token;
     },
-
-    signIn: async ({ user, account }) => {
-
-        if (account?.provider === "credentials") {
-            return true
-        } else {
-            return false
-        }
-
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        return true;
+      } else {
+        return false;
+      }
     }
-}
-})
+  }
+});

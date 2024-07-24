@@ -2,6 +2,7 @@ import { fetchAllPegawai } from '@/action/pegawai'
 import { getUserByUserId } from '@/action/user'
 import PegawaiTable from '@/components/table/PegawaiTable'
 import { getSession } from '@/lib/getSession'
+import { User } from '@prisma/client'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
@@ -13,7 +14,7 @@ const DataPegawaiPage = async ({searchParams}: {searchParams: {query?: string}})
     redirect('/login')
   }
 
-  if (user.role !== 'ADMIN') {
+  if ((user as User).role !== 'ADMIN') {
     redirect('/')
   }
 

@@ -2,13 +2,14 @@ import { fetchAllPegawai } from '@/action/pegawai';
 import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import AddDataAbsensi from '@/components/form/AddAbsensiForm';
+import { User } from '@prisma/client';
 
 const CreateAbsensiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
     const user = session?.user;
     if (!user) {
         redirect('/login');
-    } else if (user.role !== 'ADMIN') {
+    } else if ((user as User).role !== 'ADMIN') {
         redirect('/');
     }
 

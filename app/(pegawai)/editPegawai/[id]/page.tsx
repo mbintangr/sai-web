@@ -5,13 +5,14 @@ import EditDataAbsensi from '@/components/form/EditAbsensiForm';
 import { getPegawaiById } from '@/action/pegawai';
 import EditDataPegawai from '@/components/form/EditPegawaiForm';
 import { fetchAllGolongan } from '@/action/golongan';
+import { User } from '@prisma/client';
 
 const EditPegawaiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
     const user = session?.user;
     if (!user) {
         redirect('/login');
-    } else if (user.role !== 'ADMIN') {
+    } else if ((user as User).role !== 'ADMIN') {
         redirect('/');
     }
 

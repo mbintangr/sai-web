@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { hash } from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { signIn } from "@/auth";
 import { revalidatePath } from "next/cache";

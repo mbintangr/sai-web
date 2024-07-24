@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { cn } from '@/lib/utils'
 import ListItem from '../ui/list-item'
+import { User } from '@prisma/client'
 
 
 const components: { title: string; href: string; description: string }[] = [
@@ -42,7 +43,7 @@ const NavBar = async () => {
                 <h1 className='font-bold text-2xl'>SAI Attendance System</h1>
             </Link>
             <ul className='flex items-center space-x-4'>
-                <li>
+                {user && (user as User).role === 'ADMIN' && <li>
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem className='text-light-blue'>
@@ -64,7 +65,7 @@ const NavBar = async () => {
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>
-                </li>
+                </li>}
                 {!user && <li className='font-bold'><Link href="/login"><Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4">Login</Button></Link></li>}
                 {user && <form action={async () => {
                     'use server'
