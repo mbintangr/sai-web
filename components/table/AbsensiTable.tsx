@@ -15,16 +15,20 @@ import { deleteAbsensiById } from '@/action/user';
 import { checkStatus, formatter } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
 import { getSession } from '@/lib/getSession';
-import Search from './Search';
+import Search from '../Search';
+import { redirect } from 'next/navigation';
 
 const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: string }) => {
     const session = await getSession()
     const user = session?.user
+    if (!user) {
+        redirect('/login')
+    }
     return (
         <>
             <div className='flex justify-between items-center'>
-                <h1 className='font-bold text-2xl my-8'>List Absensi</h1>
-                <Link href="/add"><Button className='bg-blue hover:bg-blue/80 rounded-2xl text-white'>Add Absensi</Button></Link>
+                <h1 className='font-bold text-2xl my-8'>Data Absensi</h1>
+                <Link href="/addAbsensi"><Button className='bg-blue hover:bg-blue/80 rounded-2xl text-white'>Add Absensi</Button></Link>
             </div>
             {role === 'ADMIN' && <Search />}
             <Table className="mt-8">

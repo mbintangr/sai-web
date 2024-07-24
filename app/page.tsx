@@ -4,7 +4,7 @@ import { getSession } from "@/lib/getSession";
 import { redirect } from 'next/navigation'
 import { formatter, checkStatus } from "@/lib/date";
 import React from 'react'
-import AbsensiTable from "@/components/AbsensiTable";
+import AbsensiTable from "@/components/table/AbsensiTable";
 import Search from "@/components/Search";
 
 const Home = async ({searchParams} : {searchParams: {query?: string}}) => {

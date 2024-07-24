@@ -42,4 +42,9 @@ const extractTime = (dateStr: DateTime) => {
     return date.toTimeString().split(' ')[0];
 }
 
-export { formatter, checkStatus, extractDate, extractTime }
+const extractYear = (dateStr: DateTime) => {
+    const date = new Date(dateStr);
+    return date.getFullYear();
+}
+
+export { formatter, checkStatus, extractDate, extractTime, extractYear }

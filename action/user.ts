@@ -197,9 +197,4 @@ const addAbsensi = async (formData: FormData) => {
     redirect("/")
 }
 
-const fetchAllPegawai = async () => {
-    const pegawai = await db.pegawai.findMany({})
-    return pegawai
-}
-
-export { login, fetchAllUser, getUserByUserId, fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, deleteAbsensiById, updateAbsensiById, addAbsensi, fetchAllPegawai }
+export { login, fetchAllUser, getUserByUserId, fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, deleteAbsensiById, updateAbsensiById, addAbsensi }

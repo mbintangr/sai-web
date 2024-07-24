@@ -1,9 +1,9 @@
-import { fetchAllPegawai } from '@/action/user';
 import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
-import AddDataAbsensi from '@/components/form/AddAbsensiForm';
+import { fetchAllGolongan } from '@/action/golongan';
+import AddDataPegawai from '@/components/form/AddPegawaiForm';
 
-const CreateAbsensiPage = async ({ params }: { params: { id: string } }) => {
+const CreatePegawaiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
     const user = session?.user;
     if (!user) {
@@ -12,17 +12,16 @@ const CreateAbsensiPage = async ({ params }: { params: { id: string } }) => {
         redirect('/');
     }
 
-    const dataPegawai = await fetchAllPegawai();
-    console.log(dataPegawai);
+    const dataGolongan = await fetchAllGolongan();
 
     return (
         <div className="pt-28 px-[10vw]">
             <div className='py-8'>
                 <h1 className="font-bold text-3xl">Add Data Absensi</h1>
-                <AddDataAbsensi dataPegawai={dataPegawai} />
+                <AddDataPegawai dataGolongan={dataGolongan} />
             </div>
         </div>
     );
 };
 
-export default CreateAbsensiPage;
+export default CreatePegawaiPage;
