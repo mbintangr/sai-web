@@ -51,7 +51,7 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
                             <TableCell><Badge className={(checkStatus(absensi.waktuMasuk) === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk) === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2")}>{checkStatus(absensi.waktuMasuk)}</Badge></TableCell>
                             {(user as User).role === 'ADMIN' && <TableCell>
                                 <div className="flex space-x-2">
-                                    <Link href={`/edit/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white">Edit</Button></Link>
+                                    <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white">Edit</Button></Link>
                                     <form action={deleteAbsensiById.bind(null, absensi.id)}>
                                         <Button className="bg-orange hover:bg-orange/80 rounded-2xl text-white" type="submit">Delete</Button>
                                     </form>
