@@ -1,27 +1,24 @@
-import { DateTime } from "next-auth/providers/kakao";
-
 const formatter = (dateStr: string) => {
-    // create new date object from dateStr
     const date = new Date(dateStr);
 
-    // create new Intl.DateTimeFormat (formatter) object with id-ID locale
+    // Create new Intl.DateTimeFormat (formatter) object with id-ID locale
     const formatter = new Intl.DateTimeFormat("id-ID", {
         dateStyle: 'medium',
         timeStyle: 'short',
-    })
-    
+        timeZone: 'UTC', // Set timezone
+    });
+
     return formatter.format(date);
 }
 
-const checkStatus = (dateStr: DateTime) => {
+const checkStatus = (dateStr: string) => {
     const date = new Date(dateStr);
 
+    const extractedDate = extractDate(dateStr);
+    
     // Create thresholds
-    const tepatWaktu = new Date(date);
-    tepatWaktu.setHours(7, 0, 0, 0);
-
-    const terlambat = new Date(date);
-    terlambat.setHours(14, 0, 0, 0);
+    const tepatWaktu = new Date(`${extractedDate}T07:00:00.000Z`);
+    const terlambat = new Date(`${extractedDate}T14:00:00.000Z`);
 
     if (date < tepatWaktu) {
         return "Tepat Waktu";
@@ -32,19 +29,27 @@ const checkStatus = (dateStr: DateTime) => {
     }
 };
 
-const extractDate = (dateStr: DateTime) => {
+const extractDate = (dateStr: string) => {
     const date = new Date(dateStr);
+
+    // Get the date part only, in UTC
     return date.toISOString().split('T')[0];
 }
 
-const extractTime = (dateStr: DateTime) => {
+const extractTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toTimeString().split(' ')[0];
+
+    // Get the time part only, in UTC
+    return date.toISOString().split('T')[1].split('.')[0];
 }
 
-const extractYear = (dateStr: DateTime) => {
+
+const extractYear = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.getFullYear();
+
+    const localDate = new Date(date.getTime());
+
+    return localDate.getFullYear();
 }
 
 export { formatter, checkStatus, extractDate, extractTime, extractYear }

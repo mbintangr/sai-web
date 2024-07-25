@@ -1,17 +1,20 @@
-import { fetchAbsensiByPegawaiId, fetchAllAbsensi, getUserByUserId } from "@/action/user";
+import { fetchAbsensiByPegawaiId, fetchAllAbsensi } from "@/action/absensi";
+import { getUserByUserId } from "@/action/user";
 import { getSession } from "@/lib/getSession";
 import { redirect } from 'next/navigation'
 import React from 'react'
 import AbsensiTable from "@/components/table/AbsensiTable";
 import { User } from "@prisma/client";
 
-const Home = async ({searchParams} : {searchParams: {query?: string}}) => {
+const Home = async ({searchParams} : {searchParams: {query?: string, date?: string}}) => {
   const session = await getSession()
   const user = session?.user
 
   if (!user) {
     redirect('/login')
   }
+
+  const date = searchParams?.date || ""
 
   const query = searchParams?.query || ""
 
@@ -21,9 +24,9 @@ const Home = async ({searchParams} : {searchParams: {query?: string}}) => {
 
   let absensiData: any
   if((user as User).role === 'ADMIN') {
-    absensiData = await fetchAllAbsensi(query)
+    absensiData = await fetchAllAbsensi(query, date)
   } else if (userData) {
-    absensiData = await fetchAbsensiByPegawaiId(userData.pegawaiId)
+    absensiData = await fetchAbsensiByPegawaiId(userData.pegawaiId, date)
   }
 
   return (
