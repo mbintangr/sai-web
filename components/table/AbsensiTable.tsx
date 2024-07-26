@@ -11,13 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { deleteAbsensiById } from '@/action/user';
+import { deleteAbsensiById } from '@/action/absensi';
 import { checkStatus, formatter } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
 import { getSession } from '@/lib/getSession';
 import Search from '../Search';
 import { redirect } from 'next/navigation';
 import { User } from '@prisma/client';
+import { DateFilter } from '../filter/DateFilter';
 
 const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: string }) => {
     const session = await getSession()
@@ -32,6 +33,9 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
                 {(user as User).role === 'ADMIN' && <Link href="/addAbsensi"><Button className='bg-blue hover:bg-blue/80 rounded-2xl text-white'>Add Absensi</Button></Link>}
             </div>
             {role === 'ADMIN' && <Search />}
+            <div className='my-4 flex items-center justify-end'>
+                <DateFilter />
+            </div>
             <Table className="">
                 <TableHeader>
                     <TableRow className="font-bold">
