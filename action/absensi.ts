@@ -22,6 +22,9 @@ const fetchAbsensiByPegawaiId = async (id: number, date?: string) => {
         where: whereClause,
         include: {
             pegawai: true
+        },
+        orderBy: {
+            waktuMasuk: 'desc'
         }
     })
     
@@ -60,6 +63,9 @@ const fetchAllAbsensi = async (query?: string, date?: string) => {
         where: whereClause,
         include: {
             pegawai: true
+        },
+        orderBy: {
+            waktuMasuk: 'desc'
         }
     });
 
@@ -108,14 +114,20 @@ const addAbsensi = async (formData: FormData) => {
 
     const waktuMasuk = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
 
-    await db.absensi.create({
+    const absensi = await db.absensi.create({
         data: {
             pegawaiId: pegawaiId,
             waktuMasuk: waktuMasuk
         }
     });
 
-    redirect("/")
+    if (absensi) {
+        revalidatePath("/")
+        redirect("/")
+    } else {
+        console.log(pegawaiId, waktuMasuk);
+    }
+
 }
 
 export { fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, deleteAbsensiById, updateAbsensiById, addAbsensi }
