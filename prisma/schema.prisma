@@ -41,7 +41,7 @@ model Pegawai {
 
 model Absensi {
   id        Int      @id @default(autoincrement())
-  waktuMasuk  DateTime @default(now())
+  waktuMasuk  DateTime @default(dbgenerated("timezone('Asia/Jakarta', now())"))
   updatedAt DateTime @updatedAt
   pegawaiId Int
 

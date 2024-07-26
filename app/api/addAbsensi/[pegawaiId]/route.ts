@@ -12,7 +12,6 @@ export async function POST(req: Request, { params }: { params: { pegawaiId: stri
     await db.absensi.create({
       data: {
         pegawaiId: Number(pegawaiId),
-        waktuMasuk: new Date(), // Adjust this as needed for your actual time logic
       },
     });
 

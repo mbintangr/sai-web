@@ -1,4 +1,4 @@
-import { getAbsensiById } from '@/action/user';
+import { getAbsensiById } from '@/action/absensi';
 import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import EditDataAbsensi from '@/components/form/EditAbsensiForm';

@@ -87,7 +87,6 @@ const updateAbsensiById = async (id: number, formData: FormData) => {
 
     // Combine date and time into a single string and parse as UTC
     const dateStr = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
-    console.log(tanggalWaktuMasuk, jamWaktuMasuk, dateStr);
 
     const absensi = await db.absensi.update({
         where: { id },

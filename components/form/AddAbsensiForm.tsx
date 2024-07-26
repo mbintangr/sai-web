@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { addAbsensi } from '@/action/user';
+import { addAbsensi } from '@/action/absensi';
 import {
     Select,
     SelectContent,

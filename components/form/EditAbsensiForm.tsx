@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { extractDate, extractTime } from '@/lib/date';
-import { updateAbsensiById } from '@/action/user';
+import { updateAbsensiById } from '@/action/absensi';
 
 const EditDataAbsensi = ({ absensiData }: { absensiData: any }) => {
     const [tanggalWaktuMasuk, setTanggalWaktuMasuk] = useState('');
