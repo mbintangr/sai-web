@@ -48,7 +48,7 @@ const NavBar = async () => {
                         <NavigationMenuList>
                             <NavigationMenuItem className='text-light-blue'>
                                 <NavigationMenuTrigger className='font-bold text-md'>Master Data</NavigationMenuTrigger>
-                                <NavigationMenuContent className=' bg-light-blue text-blue'>
+                                <NavigationMenuContent className=' bg-light-blue text-blue rounded-xl'>
                                     <ul className="grid w-[200px] gap-3 p-4 rounded-xl">
                                         {components.map((component) => (
                                             <ListItem
