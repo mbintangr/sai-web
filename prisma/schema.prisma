@@ -45,7 +45,7 @@ model Absensi {
   updatedAt DateTime @updatedAt
   pegawaiId Int
 
-  pegawai Pegawai @relation(fields: [pegawaiId], references: [id])
+  pegawai Pegawai @relation(fields: [pegawaiId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -57,5 +57,5 @@ model User {
   pegawaiId Int
   role      UserRole  @default(PEGAWAI)
 
-  pegawai Pegawai @relation(fields: [pegawaiId], references: [id])
+  pegawai Pegawai @relation(fields: [pegawaiId], references: [id], onDelete: Cascade)
 }
