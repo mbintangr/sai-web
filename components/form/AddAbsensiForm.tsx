@@ -53,7 +53,7 @@ const AddDataAbsensi = ({ dataPegawai }: AddDataAbsensiProps) => {
                         <Label htmlFor="pegawai">Nama:</Label>
                         <Select value={selectedPegawai} onValueChange={handleSelectChange} name="pegawai">
                             <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full">
-                                <SelectValue placeholder="Pegawai" />
+                                <SelectValue placeholder="Nama Pegawai" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup className="bg-white rounded-xl border-1 border-orange">

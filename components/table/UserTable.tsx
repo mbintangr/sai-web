@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { extractDate, extractYear } from '@/lib/date';
+import { formatter } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
 import { getSession } from '@/lib/getSession';
 import Search from '../Search';
@@ -46,13 +46,13 @@ const UserTable = async ({ allUserData }: { allUserData: any }) => {
                         <TableRow key={user.id}>
                             <TableCell className="w-fit text-center">{index + 1}</TableCell>
                             <TableCell>{user.username}</TableCell>
-                            <TableCell className='text-center'>{extractDate(user.createdAt.toString())}</TableCell>
+                            <TableCell className='text-center'>{formatter(user.createdAt.toString())}</TableCell>
                             <TableCell className='text-center'>{user.role}</TableCell>
                             <TableCell className='text-center'>{user.pegawai.namaPegawai}</TableCell>
                             <TableCell>
                                 <div className="flex space-x-2 justify-center">
                                     <Link href={`/editUser/${user.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white">Edit</Button></Link>
-                                    <form action={deleteUserByUserId.bind(null, user.id)}>
+                                    <form action={deleteUserByUserId.bind(null, user.id)} >
                                         <Button className="bg-orange hover:bg-orange/80 rounded-2xl text-white" type="submit">Delete</Button>
                                     </form>
                                 </div>
