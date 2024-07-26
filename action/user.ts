@@ -6,26 +6,65 @@ import { CredentialsSignin } from "next-auth";
 import { signIn } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { Prisma, User } from "@prisma/client";
-import { hash } from "bcryptjs";
+import { z } from "zod";
 
-const login = async (formData: FormData) => {
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
+const UserLoginSchema = z.object({
+    username: z.string().min(1, {message: "Username is required"}),
+    password: z.string().min(1, {message: "Password is required"}),
+});
+
+const login = async (prevState: any, formData: FormData) => {
+    const validatedFields = UserLoginSchema.safeParse(Object.fromEntries(formData.entries()))
+
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
+    }
 
     try {
 
-        await signIn("credentials", {
+        const user = await db.user.findUnique({
+            where: {
+                username: validatedFields.data?.username
+            },
+            select: {
+                password: true
+            }
+        })
+
+        if (!user) {
+            return {
+                error: {
+                    username: "User not found"
+                }
+            }
+        } else if (user.password !== validatedFields.data?.password) {
+            return {
+                error: {
+                    password: "Wrong password"
+                }
+            }
+        }
+
+        const result = await signIn("credentials", {
             redirect: false,
             callbackUrl: "/",
-            username,
-            password
+            username: validatedFields.data?.username,
+            password: validatedFields.data?.password
         })
+
+        if (result?.error) {
+            return result.error;
+        }
 
     } catch (error) {
         const someError = error as CredentialsSignin
+        console.log(someError.message.toString);
         return someError.cause
     }
 
+    revalidatePath('/login')
     redirect("/")
 }
 
@@ -81,11 +120,26 @@ const fetchAllUser = async (query?: string) => {
             pegawai: true,
         },
         where: {
-            username: {
-                contains: query,
-                mode: "insensitive"
-            }
+            OR: [
+                {
+                    username: {
+                        contains: query,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    pegawai: {
+                        namaPegawai: {
+                            contains: query,
+                            mode: "insensitive"
+                        }
+                    }
+                }
+            ]
         },
+        orderBy: {
+            username: 'asc',
+        }
     })
     return user
 }
