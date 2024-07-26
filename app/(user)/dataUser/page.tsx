@@ -1,6 +1,4 @@
-import { fetchAllPegawai } from '@/action/pegawai'
 import { fetchAllUser, getUserByUserId } from '@/action/user'
-import PegawaiTable from '@/components/table/PegawaiTable'
 import UserTable from '@/components/table/UserTable'
 import { getSession } from '@/lib/getSession'
 import { User } from '@prisma/client'
