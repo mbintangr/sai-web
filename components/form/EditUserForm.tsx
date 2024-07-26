@@ -17,7 +17,7 @@ import { register, updateUser } from '@/action/user';
 
 const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: any }) => {
     const [selectedPegawai, setSelectedPegawai] = useState(dataUser.pegawaiId.toString())
-    const [selectedRole, setSelectedRole] = useState('PEGAWAI')
+    const [selectedRole, setSelectedRole] = useState(dataUser.role)
     const [username, setUsername] = useState(dataUser.username)
     const [password, setPassword] = useState(dataUser.password)
     const [rePassword, setRePassword] = useState(dataUser.password)
@@ -107,7 +107,7 @@ const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: a
                                             Admin
                                         </SelectItem>
                                         <SelectItem value="PRINCIPAL" className="hover:cursor-pointer">
-                                            Principle
+                                            Principal
                                         </SelectItem>
                                         <SelectItem value="PEGAWAI" className="hover:cursor-pointer">
                                             Pegawai

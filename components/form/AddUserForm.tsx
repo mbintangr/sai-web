@@ -20,7 +20,7 @@ interface AddDataUserProps {
 
 const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
     const [selectedPegawai, setSelectedPegawai] = useState('');
-    const [selectedRole, setSelectedRole] = useState('PEGAWAI');
+    const [selectedRole, setSelectedRole] = useState('');
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null)
     const rePasswordRef = useRef<HTMLInputElement>(null)
@@ -98,7 +98,7 @@ const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
                                             Admin
                                         </SelectItem>
                                         <SelectItem value="PRINCIPAL" className="hover:cursor-pointer">
-                                            Principle
+                                            Principal
                                         </SelectItem>
                                         <SelectItem value="PEGAWAI" className="hover:cursor-pointer">
                                             Pegawai
