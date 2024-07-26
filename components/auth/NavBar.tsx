@@ -40,7 +40,7 @@ const NavBar = async () => {
     return (
         <nav className='fixed top-0 left-0 w-full px-[10vw] py-8 z-10 bg-blue text-light-blue flex justify-between items-center'>
             <Link href={"/"}>
-                <h1 className='font-bold text-2xl'>SAI Attendance System</h1>
+                <h1 className='font-bold text-2xl'>SAI Cibinong</h1>
             </Link>
             <ul className='flex items-center space-x-4'>
                 {user && (user as User).role === 'ADMIN' && <li>
