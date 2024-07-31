@@ -33,10 +33,10 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
     const [state, formAction] = useFormState(updatePegawaiById, null);
     
     return (
-        <form action={formAction} className='mt-8 max-w-[400px] w-[50%]'>
+        <form action={formAction} className=''>
             <div className="grid items-center gap-4">
                 <div className="flex flex-col space-y-2">
-                    <Input id="id" name="id" placeholder="Id" value={dataPegawai.id} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="hidden" />
+                    <Input id="id" name="id" placeholder="Id" value={dataPegawai.id} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full" type="hidden" />
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="namaPegawai">Nama Pegawai:</Label>
                         <Input
@@ -45,7 +45,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             placeholder="Nama Pegawai"
                             ref={namaPegawaiRef}
                             defaultValue={dataPegawai.namaPegawai}
-                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto"
+                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full"
                             type="text"
                         />
                     </div>
@@ -59,7 +59,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             placeholder="Pendidikan"
                             ref={pendidikanRef}
                             defaultValue={dataPegawai.pendidikan}
-                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto"
+                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full"
                             type="text"
                         />
                     </div>
@@ -68,7 +68,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="golongan">Golongan:</Label>
                         <Select value={selectedGolongan} onValueChange={handleSelectChange} name="golongan">
-                            <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto">
+                            <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-fit">
                                 <SelectValue placeholder="Golongan" />
                             </SelectTrigger>
                             <SelectContent>
@@ -93,14 +93,14 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             placeholder="Tanggal Masuk"
                             value={tanggalMulaiKerja}
                             onChange={handleDateChange}
-                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto"
+                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-fit"
                             type="date"
                         />
                     </div>
                     <p className='text-red-600 text-right text-xs'>{state?.error?.tanggalMulaiKerja}</p>
 
                     <div className="w-full flex items-center justify-start">
-                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>
+                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-full px-4" type="submit">Save</Button>
                     </div>
                 </div>
             </div>

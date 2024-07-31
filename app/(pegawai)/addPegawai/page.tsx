@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { fetchAllGolongan } from '@/action/golongan';
 import AddDataPegawai from '@/components/form/AddPegawaiForm';
 import { User } from '@prisma/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const CreatePegawaiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
@@ -16,12 +17,19 @@ const CreatePegawaiPage = async ({ params }: { params: { id: string } }) => {
     const dataGolongan = await fetchAllGolongan();
 
     return (
-        <div className="pt-28 px-[10vw]">
-            <div className='py-8'>
-                <h1 className="font-bold text-3xl">Add Pegawai</h1>
-                <AddDataPegawai dataGolongan={dataGolongan} />
+        <>
+            <div className="absolute top-0 left-0 h-screen w-screen flex items-center justify-center">
+                <Card className="w-full mx-[10vw] max-w-[500px] rounded-xl bg-light-blue text-blue shadow-orange/50 shadow-2xl">
+                    <CardHeader>
+                        <CardTitle>Add Pegawai!</CardTitle>
+                        <CardDescription>Add new Pegawai!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <AddDataPegawai dataGolongan={dataGolongan} />
+                    </CardContent>
+                </Card>
             </div>
-        </div>
+        </>
     );
 };
 

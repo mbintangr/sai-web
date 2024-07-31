@@ -37,29 +37,29 @@ const AddDataPegawai = ({ dataGolongan }: AddDataPegawaiProps) => {
     const [state, formAction] = useFormState(addPegawai, null);
 
     return (
-        <form action={formAction} className='mt-8 max-w-[400px] w-[50%]'>
+        <form action={formAction} className=''>
             <div className="grid items-center gap-4">
                 <div className="flex flex-col space-y-2">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="namaPegawai">Nama Pegawai:</Label>
-                        <Input id="namaPegawai" name="namaPegawai" placeholder="Nama Pegawai" ref={namaPegawaiRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="text" />
+                        <Input id="namaPegawai" name="namaPegawai" placeholder="Nama Pegawai" ref={namaPegawaiRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full" type="text" />
                     </div>
                     <p className='text-red-600 text-right text-xs'>{state?.error?.namaPegawai}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="pendidikan">Pendidikan:</Label>
-                        <Input id="pendidikan" name="pendidikan" placeholder="Pendidikan" ref={pendidikanRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="text" />
+                        <Input id="pendidikan" name="pendidikan" placeholder="Pendidikan" ref={pendidikanRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full" type="text" />
                     </div>
                     <p className='text-red-600 text-right text-xs'>{state?.error?.pendidikan}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="golongan">Golongan:</Label>
                         <Select onValueChange={handleSelectChange} name="golongan">
-                            <SelectTrigger className="rounded-xl focus:border-2  focus:border-orange placeholder:text-black/50 w-auto">
+                            <SelectTrigger className="rounded-xl focus:border-2  focus:border-orange placeholder:text-black/50 w-fit">
                                 <SelectValue placeholder="Golongan" />
                             </SelectTrigger>
-                            <SelectContent className='bg-light-blue rounded-xl text-blue'>
-                                <SelectGroup className="rounded-xl border-1 border-orange">
+                            <SelectContent className='bg-light-orange text-orange rounded-xl shadow-md'>
+                                <SelectGroup className="rounded-xl border-1 border-orange bg-light-orange text-orange">
                                     <SelectLabel>Golongan</SelectLabel>
                                     {dataGolongan.map((golongan) => (
                                         <SelectItem key={golongan.id} value={golongan.id.toString()} className="hover:cursor-pointer">
