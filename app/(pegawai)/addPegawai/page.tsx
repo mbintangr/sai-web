@@ -18,7 +18,7 @@ const CreatePegawaiPage = async ({ params }: { params: { id: string } }) => {
     return (
         <div className="pt-28 px-[10vw]">
             <div className='py-8'>
-                <h1 className="font-bold text-3xl">Add Data Absensi</h1>
+                <h1 className="font-bold text-3xl">Add Pegawai</h1>
                 <AddDataPegawai dataGolongan={dataGolongan} />
             </div>
         </div>

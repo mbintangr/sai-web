@@ -22,7 +22,7 @@ interface AddDataPegawaiProps {
 
 const AddDataPegawai = ({ dataGolongan }: AddDataPegawaiProps) => {
     const [tanggalMulaiKerja, setTanggalMulaiKerja] = useState('');
-    const [selectedGolongan, setSelectedGolongan] = useState('1');
+    const [selectedGolongan, setSelectedGolongan] = useState('');
     const namaPegawaiRef = useRef<HTMLInputElement>(null);
     const pendidikanRef = useRef<HTMLInputElement>(null)
 
@@ -54,7 +54,7 @@ const AddDataPegawai = ({ dataGolongan }: AddDataPegawaiProps) => {
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="golongan">Golongan:</Label>
-                        <Select value={selectedGolongan} onValueChange={handleSelectChange} name="golongan">
+                        <Select onValueChange={handleSelectChange} name="golongan">
                             <SelectTrigger className="rounded-xl focus:border-2  focus:border-orange placeholder:text-black/50 w-auto">
                                 <SelectValue placeholder="Golongan" />
                             </SelectTrigger>
@@ -74,7 +74,7 @@ const AddDataPegawai = ({ dataGolongan }: AddDataPegawaiProps) => {
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="tanggalMulaiKerja">Tanggal Mulai Kerja:</Label>
-                        <Input id="tanggalMulaiKerja" name="tanggalMulaiKerja" placeholder="Tanggal Masuk" value={tanggalMulaiKerja} onChange={handleDateChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="date" />
+                        <Input id="tanggalMulaiKerja" name="tanggalMulaiKerja" placeholder="Tanggal Masuk" onChange={handleDateChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="date" />
                     </div>
                     <p className='text-red-600 text-right text-xs'>{state?.error?.tanggalMulaiKerja}</p>
 

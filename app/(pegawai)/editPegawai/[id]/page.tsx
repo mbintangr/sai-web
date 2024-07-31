@@ -23,7 +23,7 @@ const EditPegawaiPage = async ({ params }: { params: { id: string } }) => {
 
         <div className="pt-28 px-[10vw]">
             <div className='py-8'>
-                <h1 className="font-bold text-3xl">Edit Data Absensi</h1>
+                <h1 className="font-bold text-3xl">Edit Pegawai</h1>
                 <EditDataPegawai dataPegawai={dataPegawai} dataGolongan={dataGolongan} />
             </div>
         </div>
