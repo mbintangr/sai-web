@@ -31,7 +31,6 @@ const AddDataPegawai = ({ dataGolongan }: AddDataPegawaiProps) => {
     };
 
     const handleSelectChange = (value: string) => {
-        console.log(value);
         setSelectedGolongan(value);
     };
 

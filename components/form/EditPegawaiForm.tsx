@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,21 +15,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useFormState } from 'react-dom';
 
 const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, dataGolongan: any }) => {
-    const [namaPegawai, setNamaPegawai] = useState(dataPegawai.namaPegawai);
-    const [pendidikan, setPendidikan] = useState(dataPegawai.pendidikan);
     const [tanggalMulaiKerja, setTanggalMulaiKerja] = useState(extractDate(dataPegawai.mulaiKerja));
     const [selectedGolongan, setSelectedGolongan] = useState(dataPegawai.golonganId.toString());
-
-    const handleNamaPegawaiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNamaPegawai(e.target.value);
-    };
-
-    const handlePendidikanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPendidikan(e.target.value);
-    };
-
+    const namaPegawaiRef = useRef<HTMLInputElement>(dataPegawai.namaPegawai);
+    const pendidikanRef = useRef<HTMLInputElement>(dataPegawai.pendidikan);
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTanggalMulaiKerja(e.target.value);
     };
@@ -38,33 +30,26 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
         setSelectedGolongan(value);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('namaPegawai', namaPegawai);
-        formData.append('pendidikan', pendidikan);
-        formData.append('golonganId', selectedGolongan);
-        formData.append('tanggalMulaiKerja', tanggalMulaiKerja);
-
-        await updatePegawaiById(dataPegawai.id, formData);
-    };
-
+    const [state, formAction] = useFormState(updatePegawaiById, null);
+    
     return (
-        <form onSubmit={handleSubmit} className='mt-8 max-w-[400px] w-[50%]'>
+        <form action={formAction} className='mt-8 max-w-[400px] w-[50%]'>
             <div className="grid items-center gap-4">
                 <div className="flex flex-col space-y-2">
+                    <Input id="id" name="id" placeholder="Id" value={dataPegawai.id} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="hidden" />
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="namaPegawai">Nama Pegawai:</Label>
                         <Input
                             id="namaPegawai"
                             name="namaPegawai"
                             placeholder="Nama Pegawai"
-                            value={namaPegawai}
-                            onChange={handleNamaPegawaiChange}
+                            ref={namaPegawaiRef}
+                            defaultValue={dataPegawai.namaPegawai}
                             className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto"
                             type="text"
                         />
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.namaPegawai}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="pendidikan">Pendidikan:</Label>
@@ -72,12 +57,13 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             id="pendidikan"
                             name="pendidikan"
                             placeholder="Pendidikan"
-                            value={pendidikan}
-                            onChange={handlePendidikanChange}
+                            ref={pendidikanRef}
+                            defaultValue={dataPegawai.pendidikan}
                             className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto"
                             type="text"
                         />
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.pendidikan}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="golongan">Golongan:</Label>
@@ -97,6 +83,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             </SelectContent>
                         </Select>
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.golongan}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="tanggalMulaiKerja">Tanggal Mulai Kerja:</Label>
@@ -110,6 +97,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             type="date"
                         />
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.tanggalMulaiKerja}</p>
 
                     <div className="w-full flex items-center justify-start">
                         <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>

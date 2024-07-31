@@ -6,16 +6,14 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const PegawaiSchema = z.object({
-    namaPegawai: z.string().min(1, {message: "Username is required"}),
+    namaPegawai: z.string().min(1, {message: "Nama Pegawai is required"}),
     pendidikan: z.string().min(1, {message: "Pendidikan is required"}),
     golongan: z.string().min(1, {message: "Golongan is required"}),
     tanggalMulaiKerja: z.string().min(1, {message: "Tanggal Mulai Kerja is required"}),
 });
 
 const addPegawai = async (prevState: any, formData: FormData) => {
-    const golonganIds = formData.get("golongan") as string;
     const validatedFields = PegawaiSchema.safeParse(Object.fromEntries(formData.entries()));
-    console.log(golonganIds);
 
     if (!validatedFields.success) {
         return {
@@ -28,8 +26,6 @@ const addPegawai = async (prevState: any, formData: FormData) => {
     const golonganId = Number(validatedFields.data?.golongan as string);
     const tanggalMulaiKerja = validatedFields.data?.tanggalMulaiKerja as string;
     const mulaiKerja = new Date(`${tanggalMulaiKerja}T00:00:00Z`);
-
-    console.log(namaPegawai, pendidikan, golonganId, mulaiKerja);
     
     const pegawai = await db.pegawai.create({
         data: {
@@ -85,17 +81,26 @@ const getPegawaiById = async (id: number) => {
     return pegawai
 }
 
-const updatePegawaiById = async (id: number, formData: FormData) => {
-    const namaPegawai = formData.get("namaPegawai") as string;
-    const pendidikan = formData.get("pendidikan") as string;
-    const golonganId = Number(formData.get("golonganId") as string);
-    const tanggalMulaiKerja = formData.get("tanggalMulaiKerja") as string;
+const updatePegawaiById = async (prevState: any, formData: FormData) => {
+    const validatedFields = PegawaiSchema.safeParse(Object.fromEntries(formData.entries()));
 
-    const mulaiKerja = new Date(`${tanggalMulaiKerja}T00:00:00`);
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
+    }
+
+    const id = formData.get("id") as string;
+
+    const namaPegawai = validatedFields.data?.namaPegawai as string;
+    const pendidikan = validatedFields.data?.pendidikan as string;
+    const golonganId = Number(validatedFields.data?.golongan as string);
+    const tanggalMulaiKerja = validatedFields.data?.tanggalMulaiKerja as string;
+    const mulaiKerja = new Date(`${tanggalMulaiKerja}T00:00:00Z`);
 
     const pegawai = await db.pegawai.update({
         where: {
-            id
+            id: Number(id),
         },
         data: {
             namaPegawai,
