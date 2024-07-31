@@ -12,27 +12,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { register, updateUser } from '@/action/user';
+import { updateUser } from '@/action/user';
+import { useFormState } from 'react-dom';
 
 
 const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: any }) => {
-    const [selectedPegawai, setSelectedPegawai] = useState(dataUser.pegawaiId.toString())
+    const [selectedPegawai, setSelectedPegawai] = useState(dataUser.pegawaiId.toString());
     const [selectedRole, setSelectedRole] = useState(dataUser.role)
-    const [username, setUsername] = useState(dataUser.username)
-    const [password, setPassword] = useState(dataUser.password)
-    const [rePassword, setRePassword] = useState(dataUser.password)
-
-    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(e.target.value);
-    };
-    
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
-    };
-
-    const handleRePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setRePassword(e.target.value);
-    };
+    const usernameRef = useRef<HTMLInputElement>(null)
+    const passwordRef = useRef<HTMLInputElement>(null)
+    const rePasswordRef = useRef<HTMLInputElement>(null)
 
     const handleSelectPegawaiChange = (value: string) => {
         setSelectedPegawai(value);
@@ -42,23 +31,15 @@ const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: a
         setSelectedRole(value);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const formData = new FormData()
-        formData.append('pegawaiId', selectedPegawai)
-        formData.append('username', username)
-        formData.append('password', password)
-        formData.append('rePassword', rePassword)
-        formData.append('role', selectedRole)
-
-        await updateUser(dataUser.id, formData)
-    };
+    const [state, formAction] = useFormState(updateUser, null);
 
     return (
         <>
-            <form onSubmit={handleSubmit}>
+            <form action={formAction}>
                 <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
+
+                    <Input id="userId" name="userId" placeholder="user123" value={dataUser.id} type="hidden" />
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="pegawai">Nama Pegawai:</Label>
@@ -78,21 +59,25 @@ const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: a
                                 </SelectContent>
                             </Select>
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.pegawai}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="username">Username:</Label>
-                            <Input id="username" name="username" placeholder="user123" value={username} onChange={handleUsernameChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="text" />
+                            <Input id="username" name="username" placeholder="user123" ref={usernameRef} defaultValue={dataUser.username} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="text" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.username}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="password">Password:</Label>
-                            <Input id="password" name="password" placeholder="*********" value={password} onChange={handlePasswordChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
+                            <Input id="password" name="password" placeholder="*********" ref={passwordRef} defaultValue={dataUser.password} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.password}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
-                            <Label htmlFor="repassword">Re-Type Password:</Label>
-                            <Input id="repassword" name="repassword" placeholder="*********" value={rePassword} onChange={handleRePasswordChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
+                            <Label htmlFor="rePassword">Re-Type Password:</Label>
+                            <Input id="rePassword" name="rePassword" placeholder="*********" ref={rePasswordRef} defaultValue={dataUser.password} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.rePassword}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="role">Role:</Label>
@@ -117,6 +102,8 @@ const EditDataUser = ({ dataPegawai, dataUser }: { dataPegawai: any, dataUser: a
                             </Select>
                         </div>
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.role}</p>
+
                     <div className="w-full flex items-center justify-center mt-2">
                         <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4 sm:px-8" type="submit">Update &rarr;</Button>
                     </div>

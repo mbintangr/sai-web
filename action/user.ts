@@ -11,7 +11,18 @@ import { z } from "zod";
 const UserLoginSchema = z.object({
     username: z.string().min(1, {message: "Username is required"}),
     password: z.string().min(1, {message: "Password is required"}),
-});
+})
+
+const UserSchema = z.object({
+    pegawai: z.string().min(1, {message: "Pegawai is required"}),
+    username: z.string().min(1, {message: "Username is required"}),
+    password: z.string().min(1, {message: "Password is required"}),
+    rePassword: z.string().min(1, {message: "Re-Password is required"}),
+    role: z.string().min(1, {message: "Role is required"}),
+}).refine(data => data.password === data.rePassword, {
+    message: "Password does not match",
+    path: ["rePassword"]
+})
 
 const login = async (prevState: any, formData: FormData) => {
     const validatedFields = UserLoginSchema.safeParse(Object.fromEntries(formData.entries()))
@@ -69,20 +80,20 @@ const login = async (prevState: any, formData: FormData) => {
 }
 
 
-const register = async (formData: FormData) => {
-    const pegawaiId = formData.get("pegawaiId") as string;
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-    const rePassword = formData.get("rePassword") as string;
-    const role = formData.get("role") as User["role"];
+const register = async (prevState: any, formData: FormData) => {
+    const validatedFields = UserSchema.safeParse(Object.fromEntries(formData.entries()))
 
-    if (!pegawaiId || !username || !password || !rePassword || !role) {
-        throw new Error("Please provide all the necessary information");
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
     }
 
-    if (password !== rePassword) {
-        throw new Error("Passwords do not match");
-    }
+    const pegawaiId = validatedFields.data.pegawai as string;
+    const username = validatedFields.data.username as string;
+    const password = validatedFields.data.password as string;
+    const rePassword = validatedFields.data.rePassword as string;
+    const role = validatedFields.data.role as User["role"];
 
 
     const existingUser = await db.user.findUnique({
@@ -92,7 +103,15 @@ const register = async (formData: FormData) => {
     })
 
     if(existingUser) {
-        throw new Error("User already exists");
+        return {
+            error: {
+                pegawai: "",
+                username: "User already exists",
+                password: "",
+                rePassword: "",
+                role: "",
+            }
+        }
     }
 
     const user: User = await db.user.create({
@@ -113,6 +132,42 @@ const register = async (formData: FormData) => {
 
 
 };
+
+const updateUser = async (prevState: any, formData: FormData) => {
+    const validatedFields = UserSchema.safeParse(Object.fromEntries(formData.entries()))
+
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
+    }
+
+    const id = formData.get("userId") as string;
+    const pegawaiId = validatedFields.data.pegawai as string;
+    const username = validatedFields.data.username as string;
+    const password = validatedFields.data.password as string;
+    const rePassword = validatedFields.data.rePassword as string;
+    const role = validatedFields.data.role as User["role"];
+
+    const user = await db.user.update({
+        where: {
+            id
+        },
+        data: {
+            username,
+            password,
+            role,
+            pegawaiId: Number(pegawaiId)
+        }
+    })
+
+    if (user) {
+        revalidatePath("/dataUser")
+        redirect("/dataUser")
+    } else {
+        throw new Error("Failed to update user");
+    }
+}
 
 const fetchAllUser = async (query?: string) => {
     const user = await db.user.findMany({
@@ -138,7 +193,7 @@ const fetchAllUser = async (query?: string) => {
             ]
         },
         orderBy: {
-            username: 'asc',
+            role: 'asc',
         }
     })
     return user
@@ -154,41 +209,6 @@ const getUserByUserId = async (userId: string) => {
         }
     })
     return pegawai
-}
-
-const updateUser = async (id: string, formData: FormData) => {
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-    const rePassword = formData.get("rePassword") as string;
-    const role = formData.get("role") as User["role"];
-    const pegawaiId = formData.get("pegawaiId") as string;
-
-    if (!username || !password || !rePassword || !role || !pegawaiId) {
-        throw new Error("Please provide all the necessary information");
-    }
-
-    if (password !== rePassword) {
-        throw new Error("Passwords do not match");
-    }
-
-    const user = await db.user.update({
-        where: {
-            id
-        },
-        data: {
-            username,
-            password,
-            role,
-            pegawaiId: Number(pegawaiId)
-        }
-    })
-
-    if (user) {
-        revalidatePath("/dataUser")
-        redirect("/dataUser")
-    } else {
-        throw new Error("Failed to update user");
-    }
 }
 
 const deleteUserByUserId = async (id: string) => {

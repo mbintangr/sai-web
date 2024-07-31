@@ -13,15 +13,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { register } from '@/action/user';
+import { useFormState } from 'react-dom';
 
 interface AddDataUserProps {
     dataPegawai: { id: number; namaPegawai: string }[];
 }
 
 const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
-    const [selectedPegawai, setSelectedPegawai] = useState('');
-    const [selectedRole, setSelectedRole] = useState('');
-    const usernameRef = useRef<HTMLInputElement>(null);
+    const [selectedPegawai, setSelectedPegawai] = useState('')
+    const [selectedRole, setSelectedRole] = useState('')
+    const usernameRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const rePasswordRef = useRef<HTMLInputElement>(null)
 
@@ -33,27 +34,17 @@ const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
         setSelectedRole(value);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const formData = new FormData()
-        formData.append('pegawaiId', selectedPegawai)
-        formData.append('username', usernameRef.current?.value ?? '')
-        formData.append('password', passwordRef.current?.value ?? '')
-        formData.append('rePassword', rePasswordRef.current?.value ?? '')
-        formData.append('role', selectedRole)
-
-        await register(formData)
-    };
+    const [state, formAction] = useFormState(register, null);
 
     return (
         <>
-            <form onSubmit={handleSubmit}>
+            <form action={formAction}>
                 <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="pegawai">Nama Pegawai:</Label>
-                            <Select value={selectedPegawai} onValueChange={handleSelectPegawaiChange} name="pegawai">
+                            <Select onValueChange={handleSelectPegawaiChange} name="pegawai">
                                 <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full">
                                     <SelectValue placeholder="Nama Pegawai" />
                                 </SelectTrigger>
@@ -69,25 +60,29 @@ const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.pegawai}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="username">Username:</Label>
                             <Input id="username" name="username" placeholder="user123" ref={usernameRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="text" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.username}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="password">Password:</Label>
                             <Input id="password" name="password" placeholder="*********" ref={passwordRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.password}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-x-4 sm:space-y-0">
-                            <Label htmlFor="repassword">Re-Type Password:</Label>
-                            <Input id="repassword" name="repassword" placeholder="*********" ref={rePasswordRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
+                            <Label htmlFor="rePassword">Re-Type Password:</Label>
+                            <Input id="rePassword" name="rePassword" placeholder="*********" ref={rePasswordRef} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50" type="password" />
                         </div>
+                        <p className='text-red-600 text-right text-xs'>{state?.error?.rePassword}</p>
 
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                             <Label htmlFor="role">Role:</Label>
-                            <Select value={selectedRole} onValueChange={handleSelectRoleChange} name="role">
+                            <Select onValueChange={handleSelectRoleChange} name="role">
                                 <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full">
                                     <SelectValue placeholder="Role" />
                                 </SelectTrigger>
@@ -108,6 +103,8 @@ const AddDataUser = ({ dataPegawai }: AddDataUserProps) => {
                             </Select>
                         </div>
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.role}</p>
+
                     <div className="w-full flex items-center justify-center mt-2">
                         <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4 sm:px-8" type="submit">Register &rarr;</Button>
                     </div>
