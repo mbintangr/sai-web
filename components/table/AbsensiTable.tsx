@@ -28,8 +28,8 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
     }
     return (
         <>
-            <div className='flex justify-between items-center'>
-                <h1 className='font-bold text-2xl mt-8'>Data Absensi</h1>
+            <div className='flex justify-between items-center mt-8'>
+                <h1 className='font-bold text-2xl'>Data Absensi</h1>
                 {(user as User).role === 'ADMIN' && <Link href="/addAbsensi"><Button className='bg-blue hover:bg-blue/80 rounded-2xl text-white'>Add Absensi</Button></Link>}
             </div>
             {role === 'ADMIN' && <Search />}
@@ -52,7 +52,7 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
                             <TableCell className="w-fit text-center">{index + 1}</TableCell>
                             <TableCell>{formatter(absensi.waktuMasuk.toString())}</TableCell>
                             <TableCell>{absensi.pegawai?.namaPegawai}</TableCell>
-                            <TableCell><Badge className={(checkStatus(absensi.waktuMasuk) === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk) === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2")}>{checkStatus(absensi.waktuMasuk)}</Badge></TableCell>
+                            <TableCell><Badge className={(checkStatus(absensi.waktuMasuk) === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk) === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk)}</Badge></TableCell>
                             {(user as User).role === 'ADMIN' && <TableCell>
                                 <div className="flex space-x-2">
                                     <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white">Edit</Button></Link>
