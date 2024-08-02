@@ -100,7 +100,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                     <p className='text-red-600 text-right text-xs'>{state?.error?.tanggalMulaiKerja}</p>
 
                     <div className="w-full flex items-center justify-start">
-                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-full px-4" type="submit">Save</Button>
+                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>
                     </div>
                 </div>
             </div>
