@@ -16,6 +16,21 @@ import {
 import { cn } from '@/lib/utils'
 import ListItem from '../ui/list-item'
 import { User } from '@prisma/client'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { IoMenu, IoBriefcaseOutline, IoPersonOutline } from "react-icons/io5";
 
 
 const components: { title: string; href: string; description: string }[] = [
@@ -38,11 +53,45 @@ const NavBar = async () => {
     const user = session?.user
 
     return (
-        <nav className='fixed top-0 left-0 w-full px-[10vw] py-8 z-10 bg-blue text-light-blue flex justify-between items-center'>
+        <nav className='fixed top-0 left-0 w-full px-[10vw] py-6 sm:py-8 z-10 bg-blue text-light-blue flex justify-between items-center'>
             <Link href={"/"}>
-                <h1 className='font-bold text-2xl'>SAI Cibinong</h1>
+                <h1 className='font-bold text-xl sm:text-2xl'>SAI Cibinong</h1>
             </Link>
-            <ul className='flex items-center space-x-4'>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger className='block sm:hidden' asChild>
+                    <Button className=''><IoMenu size={25} /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className=' bg-light-blue text-blue rounded-xl'>
+                    <DropdownMenuLabel>Menu</DropdownMenuLabel>
+                    {user && (user as User).role === 'ADMIN' && <DropdownMenuSeparator className='bg-slate-300' /> }
+                    {user && (user as User).role === 'ADMIN' && <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                            <Link href='/dataPegawai' className='flex items-center'>
+                                <IoBriefcaseOutline size={18} className='mr-2' />
+                                <span>Pegawai</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href='/dataUser' className='flex items-center'>
+                                <IoPersonOutline size={18} className='mr-2' />
+                                <span>User</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>}
+                    <DropdownMenuSeparator className='bg-slate-300' />
+                    <DropdownMenuItem className=''>
+                        {user ? <form action={async () => {
+                            'use server'
+                            await signOut()
+                        }}>
+                            <button type='submit' className="font-bold rounded-full w-auto">Logout</button>
+                        </form> : <Link href={'/login'} className='font-bold'>Login &rarr;</Link>}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <ul className='hidden sm:flex items-center space-x-4'>
                 {user && (user as User).role === 'ADMIN' && <li>
                     <NavigationMenu>
                         <NavigationMenuList>

@@ -30,9 +30,9 @@ const Home = async ({searchParams} : {searchParams: {query?: string, date?: stri
   }
 
   return (
-    <div className="pt-28 px-[10vw]">
+    <div className="pt-20 sm:pt-28 px-[10vw]">
       <div className="py-8">
-        <h1 className="font-bold text-3xl">Welcome, <span className="text-orange">{userData?.pegawai.namaPegawai}!</span></h1>
+        <h1 className="font-bold text-2xl sm:text-3xl mb-4 sm:mb-2">Welcome, <span className="text-orange">{userData?.pegawai.namaPegawai}!</span></h1>
         <AbsensiTable absensiData={absensiData} role={(user as User).role}/>
       </div>
     </div>
