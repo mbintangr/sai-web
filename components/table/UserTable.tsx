@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {
     Table,
@@ -23,23 +24,54 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatter } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
-import { getSession } from '@/lib/getSession';
 import Search from '../Search';
-import { redirect } from 'next/navigation';
 import { deleteUserByUserId } from '@/action/user';
-import { IoAdd } from 'react-icons/io5';
+import { IoAdd, IoDownloadOutline } from 'react-icons/io5';
+const ExcelJS = require('exceljs');
 
-const UserTable = async ({ allUserData }: { allUserData: any }) => {
-    const session = await getSession()
-    const user = session?.user
-    if (!user) {
-        redirect('/login')
-    }
+const UserTable = ({ allUserData }: { allUserData: any }) => {
+    const exportExcelFile = () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Data User');
+
+        worksheet.columns = [
+            { header: 'No', key: 'no', width: 5 },
+            { header: 'Username', key: 'username', width: 20 },
+            { header: 'Password', key: 'password', width: 20 },
+            { header: 'Tanggal Dibuat', key: 'createdAt', width: 15 },
+            { header: 'Role', key: 'role', width: 10 },
+            { header: 'Nama Pegawai', key: 'namaPegawai', width: 30 },
+        ];
+
+        allUserData.map((user: { id: string; username: string; password: string; createdAt: DateTime; role: string; pegawai: { namaPegawai: string }; }, index: number) => {
+            worksheet.addRow({
+                no: index + 1,
+                username: user?.username,
+                password: user?.password,
+                createdAt: user?.createdAt,
+                role: user?.role,
+                namaPegawai: user?.pegawai?.namaPegawai
+            });
+        })
+
+        workbook.xlsx.writeBuffer().then((data: BlobPart) => {
+            const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Data User.xlsx';
+            link.click();
+        });
+    };
+
     return (
         <>
             <div className='flex justify-between items-center'>
                 <h1 className='font-bold text-xl sm:text-2xl my-4 sm:my-8'>Data User</h1>
-                <Link href="/addUser" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2'><IoAdd size={25} /></Link>
+                <div className='flex gap-2'>
+                    <Button className='bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
+                    <Link href="/addUser" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
+                </div>
             </div>
             <Search />
             <Table className="mt-8">

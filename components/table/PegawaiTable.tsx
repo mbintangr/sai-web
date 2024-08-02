@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {
     Table,
@@ -23,23 +24,52 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { extractYear } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
-import { getSession } from '@/lib/getSession';
 import Search from '../Search';
-import { redirect } from 'next/navigation';
 import { deletePegawaiById } from '@/action/pegawai';
-import { IoAdd } from 'react-icons/io5';
+import { IoAdd, IoDownloadOutline } from 'react-icons/io5';
+const ExcelJS = require('exceljs');
 
-const PegawaiTable = async ({ pegawaiData }: { pegawaiData: any }) => {
-    const session = await getSession()
-    const user = session?.user
-    if (!user) {
-        redirect('/login')
-    }
+const PegawaiTable = ({ pegawaiData }: { pegawaiData: any }) => {
+    const exportExcelFile = () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Data Pegawai');
+
+        worksheet.columns = [
+            { header: 'No', key: 'no', width: 5 },
+            { header: 'Nama Pegawai', key: 'namaPegawai', width: 30 },
+            { header: 'Pendidikan', key: 'pendidikan', width: 15 },
+            { header: 'Tahun Mulai Kerja', key: 'mulaiKerja', width: 10 },
+            { header: 'Golongan', key: 'golongan', width: 10 },
+        ];
+
+        pegawaiData.map((pegawai: { id: number; namaPegawai: String; pendidikan: String; mulaiKerja: DateTime; golongan: { namaGolongan: string }; }, index: number) => {
+            worksheet.addRow({
+                no: index + 1,
+                namaPegawai: pegawai?.namaPegawai,
+                pendidikan: pegawai?.pendidikan,
+                mulaiKerja: extractYear(pegawai?.mulaiKerja),
+                golongan: pegawai?.golongan?.namaGolongan
+            });
+        })
+
+        workbook.xlsx.writeBuffer().then((data: BlobPart) => {
+            const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Data Pegawai.xlsx';
+            link.click();
+        });
+    };
+
     return (
         <>
             <div className='flex justify-between items-center'>
                 <h1 className='font-bold text-xl sm:text-2xl my-4 sm:my-8'>Data Pegawai</h1>
-                <Link href="/addPegawai" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2'><IoAdd size={25} /></Link>
+                <div className='flex gap-2'>
+                    <Button className='bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
+                    <Link href="/addPegawai" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
+                </div>
             </div>
             <Search />
             <Table className="mt-8">
