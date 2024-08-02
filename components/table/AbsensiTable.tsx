@@ -8,6 +8,17 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +30,7 @@ import Search from '../Search';
 import { redirect } from 'next/navigation';
 import { User } from '@prisma/client';
 import { DateFilter } from '../filter/DateFilter';
+import { IoAdd } from "react-icons/io5";
 
 const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: string }) => {
     const session = await getSession()
@@ -28,12 +40,12 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
     }
     return (
         <>
-            <div className='flex justify-between items-center mt-8'>
-                <h1 className='font-bold text-2xl'>Data Absensi</h1>
-                {(user as User).role === 'ADMIN' && <Link href="/addAbsensi"><Button className='bg-blue hover:bg-blue/80 rounded-2xl text-white'>Add Absensi</Button></Link>}
+            <div className='flex justify-between items-center'>
+                <h1 className='font-bold text-xl sm:text-2xl'>Data Absensi</h1>
+                {(user as User).role === 'ADMIN' && <Link href="/addAbsensi" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 my-4 sm:my-8'><IoAdd size={25} /></Link>}
             </div>
             {role === 'ADMIN' && <Search />}
-            <div className='my-4 flex items-center justify-end'>
+            <div className='my-2 flex items-center justify-end'>
                 <DateFilter />
             </div>
             <Table className="">
@@ -55,10 +67,28 @@ const AbsensiTable = async ({ absensiData, role }: { absensiData: any, role: str
                             <TableCell><Badge className={(checkStatus(absensi.waktuMasuk) === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk) === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk)}</Badge></TableCell>
                             {(user as User).role === 'ADMIN' && <TableCell>
                                 <div className="flex space-x-2">
-                                    <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white">Edit</Button></Link>
-                                    <form action={deleteAbsensiById.bind(null, absensi.id)}>
-                                        <Button className="bg-orange hover:bg-orange/80 rounded-2xl text-white" type="submit">Delete</Button>
-                                    </form>
+                                    <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white shadow-xl">Edit</Button></Link>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button className="bg-orange hover:bg-orange/80 rounded-2xl text-white shadow-xl">Delete</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent className='bg-light-blue text-blue rounded-xl'>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete the absensi data from our servers.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel className='bg-green hover:bg-green/80 text-light-green hover:text-light-green rounded-2xl shadow-xl px-4 border-0'>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction className='bg-orange hover:bg-orange/80 text-light-orange rounded-2xl shadow-xl px-4'>
+                                                    <form action={deleteAbsensiById.bind(null, absensi.id)}>
+                                                        <button type="submit">Continue</button>
+                                                    </form>
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </div>
                             </TableCell>}
                         </TableRow>
