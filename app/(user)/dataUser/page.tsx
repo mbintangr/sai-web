@@ -27,7 +27,7 @@ const DataUserPage = async ({searchParams}: {searchParams: {query?: string}}) =>
   allUserData = await fetchAllUser(query)
 
   return (
-    <div className="pt-12 sm:pt-20 px-[10vw]">
+    <div className="pt-16 sm:pt-20 px-[10vw]">
       <div className="py-8">
         <UserTable allUserData={allUserData} />
       </div>

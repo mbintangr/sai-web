@@ -20,12 +20,20 @@ const Home = async ({searchParams} : {searchParams: {query?: string, date?: stri
 
   const userId = user?.id as string | ""
 
-  const userData = await getUserByUserId(userId)
+  let userData = await getUserByUserId(userId)
+
+  if (!userData) {
+    throw new Error("User Data not found")
+  }
+
+  console.log(user.role);
 
   let absensiData: any
   if((user as User).role === 'ADMIN') {
     absensiData = await fetchAllAbsensi(query, date)
-  } else if (userData) {
+  } else if ((user as User).role === 'PRINCIPAL' && userData) {
+    absensiData = await fetchAllAbsensi(query, date)
+  } else {
     absensiData = await fetchAbsensiByPegawaiId(userData.pegawaiId, date)
   }
 

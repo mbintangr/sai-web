@@ -85,7 +85,7 @@ const NavBar = async () => {
                             'use server'
                             await signOut()
                         }}>
-                            <button type='submit' className="font-bold rounded-full w-auto">Logout</button>
+                            <button type='submit' className="font-bold rounded-full w-auto">Logout &rarr;</button>
                         </form> : <Link href={'/login'} className='font-bold'>Login &rarr;</Link>}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
