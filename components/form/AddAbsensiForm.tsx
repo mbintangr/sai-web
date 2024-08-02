@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useFormState } from 'react-dom';
 
 interface AddDataAbsensiProps {
     dataPegawai: { id: number; namaPegawai: string }[];
@@ -36,27 +37,20 @@ const AddDataAbsensi = ({ dataPegawai }: AddDataAbsensiProps) => {
         setSelectedPegawai(value);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('tanggalWaktuMasuk', tanggalWaktuMasuk);
-        formData.append('jamWaktuMasuk', jamWaktuMasuk);
-        formData.append('pegawaiId', selectedPegawai)
-        await addAbsensi(formData);
-    };
-
+    const [state, formAction] = useFormState(addAbsensi, null);
+    
     return (
-        <form onSubmit={handleSubmit} className='mt-8 max-w-[400px] w-[50%]'>
+        <form action={formAction} className=''>
             <div className="grid items-center gap-4">
                 <div className="flex flex-col space-y-2">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="pegawai">Nama:</Label>
-                        <Select value={selectedPegawai} onValueChange={handleSelectChange} name="pegawai">
+                        <Select onValueChange={handleSelectChange} name="pegawai">
                             <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full">
                                 <SelectValue placeholder="Nama Pegawai" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup className="bg-white rounded-xl border-1 border-orange">
+                            <SelectContent className='bg-light-orange text-orange rounded-xl shadow-md'>
+                                <SelectGroup className="rounded-xl border-1 border-orange bg-light-orange text-orange">
                                     <SelectLabel>Nama Pegawai</SelectLabel>
                                     {dataPegawai.map((pegawai) => (
                                         <SelectItem key={pegawai.id} value={pegawai.id.toString()} className="hover:cursor-pointer">
@@ -67,16 +61,19 @@ const AddDataAbsensi = ({ dataPegawai }: AddDataAbsensiProps) => {
                             </SelectContent>
                         </Select>
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.pegawai}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="tanggalWaktuMasuk">Tanggal Absensi:</Label>
                         <Input id="tanggalWaktuMasuk" name="tanggalWaktuMasuk" placeholder="Tanggal Masuk" value={tanggalWaktuMasuk} onChange={handleDateChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="date" />
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.tanggalWaktuMasuk}</p>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="jamWaktuMasuk">Jam Absensi:</Label>
                         <Input id="jamWaktuMasuk" name="jamWaktuMasuk" placeholder="Jam Masuk" value={jamWaktuMasuk} onChange={handleTimeChange} className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-auto" type="time" />
                     </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.jamWaktuMasuk}</p>
 
                     <div className="w-full flex items-center justify-start">
                         <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>

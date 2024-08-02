@@ -3,6 +3,7 @@ import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import AddDataAbsensi from '@/components/form/AddAbsensiForm';
 import { User } from '@prisma/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const CreateAbsensiPage = async ({ params }: { params: { id: string } }) => {
     const session = await getSession();
@@ -16,12 +17,19 @@ const CreateAbsensiPage = async ({ params }: { params: { id: string } }) => {
     const dataPegawai = await fetchAllPegawai();
 
     return (
-        <div className="pt-28 px-[10vw]">
-            <div className='py-8'>
-                <h1 className="font-bold text-3xl">Add Data Absensi</h1>
-                <AddDataAbsensi dataPegawai={dataPegawai} />
+        <>
+            <div className="absolute top-0 left-0 h-screen w-screen flex items-center justify-center">
+                <Card className="w-full mx-[10vw] max-w-[500px] rounded-xl bg-light-blue text-blue shadow-orange/50 shadow-2xl">
+                    <CardHeader>
+                        <CardTitle>Add Data Absensi!</CardTitle>
+                        <CardDescription>Add new Absensi Record!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <AddDataAbsensi dataPegawai={dataPegawai} />
+                    </CardContent>
+                </Card>
             </div>
-        </div>
+        </>
     );
 };
 

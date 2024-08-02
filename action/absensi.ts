@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 const fetchAbsensiByPegawaiId = async (id: number, date?: string) => {
     const whereClause: Prisma.AbsensiWhereInput = {
@@ -83,34 +84,62 @@ const deleteAbsensiById = async (id: number) => {
     revalidatePath("/")
 }
 
-const updateAbsensiById = async (id: number, formData: FormData) => {
-    const tanggalWaktuMasuk = formData.get("tanggalWaktuMasuk") as string;
-    const jamWaktuMasuk = formData.get("jamWaktuMasuk") as string;
+const AbsensiSchema = z.object({
+    pegawai: z.string().min(1, {message: "Nama Pegawai is required"}),
+    tanggalWaktuMasuk: z.string().min(1, {message: "Date is required"}),
+    jamWaktuMasuk: z.string().min(1, {message: "Time is required"}),
+});
 
-    if (!tanggalWaktuMasuk || !jamWaktuMasuk) {
-        throw new Error("Both date and time must be provided");
+const EditAbsensiSchema = z.object({
+    tanggalWaktuMasuk: z.string().min(1, {message: "Date is required"}),
+    jamWaktuMasuk: z.string().min(1, {message: "Time is required"}),
+});
+
+const updateAbsensiById = async (prevState: any, formData: FormData) => {
+    const validatedFields = EditAbsensiSchema.safeParse(Object.fromEntries(formData.entries()));
+
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
     }
+    
+    const tanggalWaktuMasuk = validatedFields.data?.tanggalWaktuMasuk as string;
+    const jamWaktuMasuk = validatedFields.data?.jamWaktuMasuk as string;
+    const id = Number(formData.get("absensiId") as string);
 
-    // Combine date and time into a single string and parse as UTC
-    const dateStr = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
+    const waktuMasuk = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
 
     const absensi = await db.absensi.update({
-        where: { id },
-        data: { waktuMasuk: dateStr }
+        where: { 
+            id 
+        },
+        data: { 
+            waktuMasuk 
+        }
     });
 
-    redirect("/");
+    if (absensi) {
+        revalidatePath("/")
+        redirect("/");
+    } else {
+        console.log(id, waktuMasuk);
+    }
 }
 
 
-const addAbsensi = async (formData: FormData) => {
-    const tanggalWaktuMasuk = formData.get("tanggalWaktuMasuk") as string;
-    const jamWaktuMasuk = formData.get("jamWaktuMasuk") as string;
-    const pegawaiId = Number(formData.get("pegawaiId") as string);
+const addAbsensi = async (prevState: any, formData: FormData) => {
+    const validatedFields = AbsensiSchema.safeParse(Object.fromEntries(formData.entries()));
 
-    if (!tanggalWaktuMasuk || !jamWaktuMasuk) {
-        throw new Error("Both date and time must be provided");
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors
+        }
     }
+
+    const tanggalWaktuMasuk = validatedFields.data?.tanggalWaktuMasuk as string;
+    const jamWaktuMasuk = validatedFields.data?.jamWaktuMasuk as string;
+    const pegawaiId = Number(validatedFields.data?.pegawai as string);
 
     const waktuMasuk = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
 
