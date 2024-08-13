@@ -50,7 +50,7 @@ export function DateFilter() {
                     {date ? format(date, "PPP") : <span className="text-orange">Pick a date</span>}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-light-orange text-orange">
+            <PopoverContent className="w-auto p-0 bg-light-orange text-orange rounded-xl">
                 <Calendar
                     mode="single"
                     selected={date}

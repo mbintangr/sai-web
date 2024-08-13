@@ -32,6 +32,32 @@ const fetchAbsensiByPegawaiId = async (id: number, date?: string) => {
     return absensi
 }
 
+const fetchAbsensiByPegawaiId_monthly = async (id: number, date: string) => {
+    const whereClause: Prisma.AbsensiWhereInput = {
+        pegawai: {
+            id
+        },
+        ...(date && date !== '' ? {
+            waktuMasuk: {
+                gte: new Date(new Date(date).getFullYear(), new Date(date).getMonth(), 1), // Start of the month
+                lt: new Date(new Date(date).getFullYear(), new Date(date).getMonth() + 1, 1) // Start of the next month
+            }
+        } : {}),
+    };
+
+    const absensi = await db.absensi.findMany({
+        where: whereClause,
+        include: {
+            pegawai: true
+        },
+        orderBy: {
+            waktuMasuk: 'desc'
+        }
+    });
+    
+    return absensi;
+}
+
 const getAbsensiById = async (id: number) => {
     const absensi = await db.absensi.findUnique({
         where: {
@@ -159,4 +185,4 @@ const addAbsensi = async (prevState: any, formData: FormData) => {
 
 }
 
-export { fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, deleteAbsensiById, updateAbsensiById, addAbsensi }
+export { fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, fetchAbsensiByPegawaiId_monthly, deleteAbsensiById, updateAbsensiById, addAbsensi }
