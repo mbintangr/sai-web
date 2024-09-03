@@ -40,15 +40,17 @@ const PegawaiTable = ({ pegawaiData }: { pegawaiData: any }) => {
             { header: 'Pendidikan', key: 'pendidikan', width: 15 },
             { header: 'Tahun Mulai Kerja', key: 'mulaiKerja', width: 10 },
             { header: 'Golongan', key: 'golongan', width: 10 },
+            { header: 'Pin', key: 'pin', width: 10 },
         ];
 
-        pegawaiData.map((pegawai: { id: number; namaPegawai: String; pendidikan: String; mulaiKerja: DateTime; golongan: { namaGolongan: string }; }, index: number) => {
+        pegawaiData.map((pegawai: { id: number; namaPegawai: String; pendidikan: String; mulaiKerja: DateTime; golongan: { namaGolongan: string }; pin: number }, index: number) => {
             worksheet.addRow({
                 no: index + 1,
                 namaPegawai: pegawai?.namaPegawai,
                 pendidikan: pegawai?.pendidikan,
                 mulaiKerja: extractYear(pegawai?.mulaiKerja),
-                golongan: pegawai?.golongan?.namaGolongan
+                golongan: pegawai?.golongan?.namaGolongan,
+                pin: pegawai.pin ? pegawai.pin : 'N/A',
             });
         })
 
@@ -67,8 +69,8 @@ const PegawaiTable = ({ pegawaiData }: { pegawaiData: any }) => {
             <div className='flex justify-between items-center'>
                 <h1 className='font-bold text-xl sm:text-2xl my-4 sm:my-8'>Data Pegawai</h1>
                 <div className='flex gap-2'>
-                    <Button className='bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
-                    <Link href="/addPegawai" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
+                    <Button className='bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md shadow-xl' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
+                    <Link href="/addPegawai" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex shadow-xl'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
                 </div>
             </div>
             <Search />
@@ -80,17 +82,19 @@ const PegawaiTable = ({ pegawaiData }: { pegawaiData: any }) => {
                         <TableHead className="font-bold text-center">Pendidikan</TableHead>
                         <TableHead className="font-bold text-center">Tahun Mulai Kerja</TableHead>
                         <TableHead className="font-bold text-center">Golongan</TableHead>
+                        <TableHead className="font-bold text-center">Pin</TableHead>
                         <TableHead className="font-bold text-center">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {pegawaiData?.map((pegawai: { id: number; namaPegawai: String; pendidikan: String; mulaiKerja: DateTime; golongan: { namaGolongan: string }; }, index: number) => (
+                    {pegawaiData?.map((pegawai: { id: number; namaPegawai: String; pendidikan: String; mulaiKerja: DateTime; golongan: { namaGolongan: string }; pin: number }, index: number) => (
                         <TableRow key={pegawai.id}>
                             <TableCell className="w-fit text-center">{index + 1}</TableCell>
                             <TableCell>{pegawai.namaPegawai}</TableCell>
                             <TableCell className='text-center'>{pegawai.pendidikan}</TableCell>
                             <TableCell className='text-center'>{extractYear(pegawai.mulaiKerja.toString())}</TableCell>
                             <TableCell className='text-center'>{pegawai.golongan.namaGolongan}</TableCell>
+                            <TableCell className='text-center'>{pegawai.pin ? pegawai.pin : 'N/A'}</TableCell>
                             <TableCell>
                                 <div className="flex space-x-2 justify-center">
                                     <Link href={`/editPegawai/${pegawai.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white shadow-xl">Edit</Button></Link>

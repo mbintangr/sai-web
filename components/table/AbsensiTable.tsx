@@ -124,7 +124,7 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
         <div className='flex items-center gap-2'>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className='bg-green hover:bg-green/80 rounded-full text-white text-md'><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
+              <Button className='shadow-xl bg-green hover:bg-green/80 rounded-full text-white text-md'><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white rounded-xl">
               <DialogHeader>
@@ -211,7 +211,7 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {role === 'ADMIN' && <Link href="/addAbsensi" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>}
+          {role === 'ADMIN' && <Link href="/addAbsensi" className='shadow-xl bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>}
         </div>
       </div>
       {(role === 'ADMIN' || 'PRINCIPAL') && <Search />}

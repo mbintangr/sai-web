@@ -69,8 +69,8 @@ const UserTable = ({ allUserData }: { allUserData: any }) => {
             <div className='flex justify-between items-center'>
                 <h1 className='font-bold text-xl sm:text-2xl my-4 sm:my-8'>Data User</h1>
                 <div className='flex gap-2'>
-                    <Button className='bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
-                    <Link href="/addUser" className='bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
+                    <Button className='shadow-xl bg-green hover:bg-green/80 rounded-full text-white flex items-center text-md' onClick={exportExcelFile} ><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
+                    <Link href="/addUser" className='shadow-xl bg-blue hover:bg-blue/80 rounded-full text-white p-2 flex'><span className='hidden sm:inline mx-1'>Add Data</span><IoAdd size={25} /></Link>
                 </div>
             </div>
             <Search />

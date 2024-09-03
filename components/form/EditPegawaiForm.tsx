@@ -22,6 +22,7 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
     const [selectedGolongan, setSelectedGolongan] = useState(dataPegawai.golonganId.toString());
     const namaPegawaiRef = useRef<HTMLInputElement>(dataPegawai.namaPegawai);
     const pendidikanRef = useRef<HTMLInputElement>(dataPegawai.pendidikan);
+    const pinRef = useRef<HTMLInputElement>(dataPegawai.pin);
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTanggalMulaiKerja(e.target.value);
     };
@@ -85,6 +86,20 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                     </div>
                     <p className='text-red-600 text-right text-xs'>{state?.error?.golongan}</p>
 
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
+                        <Label htmlFor="pin">Pin:</Label>
+                        <Input
+                            id="pin"
+                            name="pin"
+                            placeholder="Pin"
+                            ref={pinRef}
+                            defaultValue={dataPegawai.pin}
+                            className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50 w-full"
+                            type="number"
+                        />
+                    </div>
+                    <p className='text-red-600 text-right text-xs'>{state?.error?.pin}</p>
+                    
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="tanggalMulaiKerja">Tanggal Mulai Kerja:</Label>
                         <Input

@@ -22,17 +22,18 @@ enum UserRole {
 
 model Golongan {
   id            Int       @id @default(autoincrement())
-  namaGolongan String
-  gajiPokok    String
+  namaGolongan  String
+  gajiPokok     String
   pegawai       Pegawai[]
 }
 
 model Pegawai {
-  id           Int      @id @default(autoincrement())
-  namaPegawai String
-  pendidikan   String
-  mulaiKerja  DateTime
-  golonganId   Int
+  id            Int      @id @default(autoincrement())
+  namaPegawai   String
+  pendidikan    String
+  mulaiKerja    DateTime
+  golonganId    Int
+  pin           Int?      @unique
 
   golongan Golongan  @relation(fields: [golonganId], references: [id])
   absensi  Absensi[]
@@ -40,10 +41,10 @@ model Pegawai {
 }
 
 model Absensi {
-  id        Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   waktuMasuk  DateTime @default(dbgenerated("timezone('Asia/Jakarta', now())"))
-  updatedAt DateTime @updatedAt
-  pegawaiId Int
+  updatedAt   DateTime @updatedAt
+  pegawaiId   Int
 
   pegawai Pegawai @relation(fields: [pegawaiId], references: [id], onDelete: Cascade)
 }

@@ -9,11 +9,19 @@ const PegawaiSchema = z.object({
     namaPegawai: z.string().min(1, {message: "Nama Pegawai is required"}),
     pendidikan: z.string().min(1, {message: "Pendidikan is required"}),
     golongan: z.string().min(1, {message: "Golongan is required"}),
+    pin: z.string().min(6, {message: "Pin has to be 6 digit"}).max(6, {message: "Pin has to be 6 digit"}),
+    tanggalMulaiKerja: z.string().min(1, {message: "Tanggal Mulai Kerja is required"}),
+});
+
+const AddPegawaiSchema = z.object({
+    namaPegawai: z.string().min(1, {message: "Nama Pegawai is required"}),
+    pendidikan: z.string().min(1, {message: "Pendidikan is required"}),
+    golongan: z.string().min(1, {message: "Golongan is required"}),
     tanggalMulaiKerja: z.string().min(1, {message: "Tanggal Mulai Kerja is required"}),
 });
 
 const addPegawai = async (prevState: any, formData: FormData) => {
-    const validatedFields = PegawaiSchema.safeParse(Object.fromEntries(formData.entries()));
+    const validatedFields = AddPegawaiSchema.safeParse(Object.fromEntries(formData.entries()));
 
     if (!validatedFields.success) {
         return {
@@ -24,6 +32,7 @@ const addPegawai = async (prevState: any, formData: FormData) => {
     const namaPegawai = validatedFields.data?.namaPegawai as string;
     const pendidikan = validatedFields.data?.pendidikan as string;
     const golonganId = Number(validatedFields.data?.golongan as string);
+    // const pin = Number(validatedFields.data?.pin as string);
     const tanggalMulaiKerja = validatedFields.data?.tanggalMulaiKerja as string;
     const mulaiKerja = new Date(`${tanggalMulaiKerja}T00:00:00Z`);
     
@@ -32,6 +41,7 @@ const addPegawai = async (prevState: any, formData: FormData) => {
             namaPegawai,
             pendidikan,
             golonganId,
+            // pin,
             mulaiKerja
         }
     })
@@ -95,6 +105,7 @@ const updatePegawaiById = async (prevState: any, formData: FormData) => {
     const namaPegawai = validatedFields.data?.namaPegawai as string;
     const pendidikan = validatedFields.data?.pendidikan as string;
     const golonganId = Number(validatedFields.data?.golongan as string);
+    const pin = Number(validatedFields.data?.pin as string)
     const tanggalMulaiKerja = validatedFields.data?.tanggalMulaiKerja as string;
     const mulaiKerja = new Date(`${tanggalMulaiKerja}T00:00:00Z`);
 
@@ -106,6 +117,7 @@ const updatePegawaiById = async (prevState: any, formData: FormData) => {
             namaPegawai,
             pendidikan,
             golonganId,
+            pin,
             mulaiKerja
         }
     });
