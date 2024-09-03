@@ -11,6 +11,18 @@ const formatter = (dateStr: string) => {
     return formatter.format(date);
 }
 
+const dateFormatter = (dateStr: string) => {
+    const date = new Date(dateStr);
+
+    // Create new Intl.DateTimeFormat (formatter) object with id-ID locale
+    const formatter = new Intl.DateTimeFormat("id-ID", {
+        dateStyle: 'medium',
+        timeZone: 'Asia/Jakarta', // Set timezone
+    });
+
+    return formatter.format(date);
+}
+
 const checkStatus = (dateStr: string) => {
     const date = new Date(dateStr);
     const extractedDate = extractDate(dateStr);
@@ -75,4 +87,4 @@ function getNumberOfWeekdays(dateStr: string): number {
     return weekdaysCount;
   }
 
-export { formatter, checkStatus, extractDate, extractTime, extractYear, getNumberOfWeekdays }
+export { formatter, dateFormatter, checkStatus, extractDate, extractTime, extractYear, getNumberOfWeekdays }

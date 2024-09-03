@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { formatter } from '@/lib/date';
+import { dateFormatter } from '@/lib/date';
 import { DateTime } from 'next-auth/providers/kakao';
 import Search from '../Search';
 import { deleteUserByUserId } from '@/action/user';
@@ -48,7 +48,7 @@ const UserTable = ({ allUserData }: { allUserData: any }) => {
                 no: index + 1,
                 username: user?.username,
                 password: user?.password,
-                createdAt: user?.createdAt,
+                createdAt: dateFormatter(user?.createdAt),
                 role: user?.role,
                 namaPegawai: user?.pegawai?.namaPegawai
             });
@@ -90,7 +90,7 @@ const UserTable = ({ allUserData }: { allUserData: any }) => {
                         <TableRow key={user.id}>
                             <TableCell className="w-fit text-center">{index + 1}</TableCell>
                             <TableCell>{user.username}</TableCell>
-                            <TableCell className='text-center'>{formatter(user.createdAt.toString())}</TableCell>
+                            <TableCell className='text-center'>{dateFormatter(user.createdAt.toString())}</TableCell>
                             <TableCell className='text-center'>{user.role}</TableCell>
                             <TableCell className='text-center'>{user.pegawai.namaPegawai}</TableCell>
                             <TableCell>
