@@ -25,8 +25,8 @@ const EditPegawaiPage = async ({ params }: { params: { id: string } }) => {
             <div className="absolute top-0 left-0 h-screen w-screen flex items-center justify-center">
                 <Card className="w-full mx-[10vw] max-w-[500px] rounded-xl bg-light-blue text-blue shadow-orange/50 shadow-2xl">
                     <CardHeader>
-                        <CardTitle>Add Pegawai!</CardTitle>
-                        <CardDescription>Add new Pegawai!</CardDescription>
+                        <CardTitle>Edit Pegawai!</CardTitle>
+                        <CardDescription>Update existing Pegawai!</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <EditDataPegawai dataPegawai={dataPegawai} dataGolongan={dataGolongan} />
