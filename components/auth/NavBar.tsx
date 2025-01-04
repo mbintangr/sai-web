@@ -46,6 +46,12 @@ const components: { title: string; href: string; description: string }[] = [
         description:
             "Data User",
     },
+    {
+        title: "Settings",
+        href: "/settings",
+        description:
+            "System Settings",
+    },
 ]
 
 const NavBar = async () => {
