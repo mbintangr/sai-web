@@ -58,6 +58,32 @@ const fetchAbsensiByPegawaiId_monthly = async (id: number, date: string) => {
     return absensi;
 }
 
+const fetchAbsensiByPegawaiId_timeRange = async (id: number, startDate: string, endDate: string) => {
+    const whereClause: Prisma.AbsensiWhereInput = {
+        pegawai: {
+            id
+        },
+        ...(startDate && startDate !== '' && endDate && endDate !== '' ? {
+            waktuMasuk: {
+                gte: new Date(startDate), // Start of the specified range
+                lt: new Date(new Date(endDate).getTime() + 86400000) // End of the specified range (exclusive)
+            }
+        } : {}),
+    };
+
+    const absensi = await db.absensi.findMany({
+        where: whereClause,
+        include: {
+            pegawai: true
+        },
+        orderBy: {
+            waktuMasuk: 'desc'
+        }
+    });
+    
+    return absensi;
+}
+
 const getAbsensiById = async (id: number) => {
     const absensi = await db.absensi.findUnique({
         where: {
@@ -185,4 +211,4 @@ const addAbsensi = async (prevState: any, formData: FormData) => {
 
 }
 
-export { fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, fetchAbsensiByPegawaiId_monthly, deleteAbsensiById, updateAbsensiById, addAbsensi }
+export { fetchAllAbsensi, getAbsensiById, fetchAbsensiByPegawaiId, fetchAbsensiByPegawaiId_monthly, fetchAbsensiByPegawaiId_timeRange, deleteAbsensiById, updateAbsensiById, addAbsensi }

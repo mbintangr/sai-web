@@ -1,26 +1,26 @@
 'use server';
 import { checkStatus, getNumberOfWeekdays } from "./date";
-import { fetchAbsensiByPegawaiId_monthly } from "@/action/absensi";
+import { fetchAbsensiByPegawaiId_timeRange } from "@/action/absensi";
 
-const processData = async (pegawaiData: any[], date: string): Promise<any[]> => {
+const processData = async (pegawaiData: any[], startDate: string, endDate: string, waktuMasukMaksimal: string, waktuPulang: string, reportParameters: Array<string>): Promise<any[]> => {
     const reportData: any[] = [];
 
     for (const pegawai of pegawaiData) {
-        const absensiPegawai = await fetchAbsensiByPegawaiId_monthly(pegawai.id, date);
+        const absensiPegawai = await fetchAbsensiByPegawaiId_timeRange(pegawai.id, startDate, endDate);
 
         let keterlambatanMenit = 0;
-        let ketidakhadiranHari = getNumberOfWeekdays(date);
+        let ketidakhadiranHari = getNumberOfWeekdays(startDate, endDate);
 
         absensiPegawai.forEach((absensi) => {
-            if (checkStatus(absensi.waktuMasuk.toString()).status !== 'Pulang') {
-                keterlambatanMenit += checkStatus(absensi.waktuMasuk.toString()).minutesLate;
+            if (checkStatus(absensi.waktuMasuk.toString(), waktuMasukMaksimal, waktuPulang).status !== 'Pulang') {
+                keterlambatanMenit += checkStatus(absensi.waktuMasuk.toString(), waktuMasukMaksimal, waktuPulang).minutesLate;
                 ketidakhadiranHari -= 1;
             }
         });
 
-        let totalMenitKerja = (getNumberOfWeekdays(date) * 8 * 60) - keterlambatanMenit - (ketidakhadiranHari * 8 * 60);
+        let totalMenitKerja = (getNumberOfWeekdays(startDate, endDate) * +reportParameters[3] * 60) - keterlambatanMenit - (ketidakhadiranHari * +reportParameters[3] * 60);
 
-        const keterlambatanPotongan = 60000 - keterlambatanMenit * 1000;
+        const keterlambatanPotongan = +reportParameters[0] - keterlambatanMenit * +reportParameters[1];
         let keterlambatanKonversi = 0;
         if (keterlambatanPotongan > 0) {
             keterlambatanKonversi = 0;
@@ -28,13 +28,13 @@ const processData = async (pegawaiData: any[], date: string): Promise<any[]> => 
             keterlambatanKonversi = keterlambatanPotongan * -1;
         }
 
-        const ketidakhadiranPotongan = ketidakhadiranHari * 25000;
+        const ketidakhadiranPotongan = ketidakhadiranHari * +reportParameters[2];
         let ketidakhadiranKonversi = 0;
         if (ketidakhadiranPotongan > 0) {
             ketidakhadiranKonversi = ketidakhadiranPotongan;
         }
 
-        const tmkPercentage = totalMenitKerja/(getNumberOfWeekdays(date) * 8 * 60)
+        const tmkPercentage = totalMenitKerja/(getNumberOfWeekdays(startDate, endDate) * +reportParameters[3] * 60)
 
         let pointAbsen = 0
         if (tmkPercentage >= 0.95) {

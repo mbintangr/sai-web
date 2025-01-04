@@ -1,3 +1,5 @@
+import { getSettingsValueByName } from "@/action/settings";
+
 const formatter = (dateStr: string) => {
     const date = new Date(dateStr);
 
@@ -23,13 +25,13 @@ const dateFormatter = (dateStr: string) => {
     return formatter.format(date);
 }
 
-const checkStatus = (dateStr: string) => {
+const checkStatus = (dateStr: string, waktuMasukMaksimal: string, waktuPulang: string) => {
     const date = new Date(dateStr);
     const extractedDate = extractDate(dateStr);
   
     // Create thresholds
-    const tepatWaktu = new Date(`${extractedDate}T07:00:00.000Z`);
-    const terlambat = new Date(`${extractedDate}T14:00:00.000Z`);
+    const tepatWaktu = new Date(`${extractedDate}T${waktuMasukMaksimal}Z`);
+    const terlambat = new Date(`${extractedDate}T${waktuPulang}Z`);
   
     if (date < tepatWaktu) {
       return { status: "Tepat Waktu", minutesLate: 0 };
@@ -64,27 +66,49 @@ const extractYear = (dateStr: string) => {
     return localDate.getFullYear();
 }
 
-function getNumberOfWeekdays(dateStr: string): number {
-    let weekdaysCount = 0;
+// function getNumberOfWeekdays(dateStr: string): number {
+//     let weekdaysCount = 0;
   
-    // Parse the date string to get the year and month
-    const [year, month] = dateStr.split('-').map(Number);
+//     // Parse the date string to get the year and month
+//     const [year, month] = dateStr.split('-').map(Number);
   
-    // Note: JavaScript's Date object uses zero-based months (0 for January, 11 for December)
-    const date = new Date(year, month - 1, 1);
+//     // Note: JavaScript's Date object uses zero-based months (0 for January, 11 for December)
+//     const date = new Date(year, month - 1, 1);
   
-    // Iterate through each day of the month
-    while (date.getMonth() === month - 1) {
+//     // Iterate through each day of the month
+//     while (date.getMonth() === month - 1) {
+//       const day = date.getDay();
+//       // Check if the day is a weekday (Monday to Friday)
+//       if (day !== 0 && day !== 6) {
+//         weekdaysCount++;
+//       }
+//       // Move to the next day
+//       date.setDate(date.getDate() + 1);
+//     }
+  
+//     return weekdaysCount;
+//   }
+
+function getNumberOfWeekdays(startDateStr: string, endDateStr: string): number {
+  let weekdaysCount = 0;
+
+  // Parse the date strings to get the start and end dates
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  // Ensure the end date is inclusive
+  endDate.setDate(endDate.getDate() + 1); // Move to the next day for inclusive counting
+
+  // Iterate through each day in the range
+  for (let date = startDate; date < endDate; date.setDate(date.getDate() + 1)) {
       const day = date.getDay();
       // Check if the day is a weekday (Monday to Friday)
       if (day !== 0 && day !== 6) {
-        weekdaysCount++;
+          weekdaysCount++;
       }
-      // Move to the next day
-      date.setDate(date.getDate() + 1);
-    }
-  
-    return weekdaysCount;
   }
+
+  return weekdaysCount;
+}
 
 export { formatter, dateFormatter, checkStatus, extractDate, extractTime, extractYear, getNumberOfWeekdays }

@@ -48,33 +48,70 @@ import { DateFilter } from '../filter/DateFilter';
 import { IoAdd, IoDownloadOutline } from "react-icons/io5";
 import { DateTime } from 'next-auth/providers/kakao';
 import { processData } from '@/lib/report';
-import { Label } from '../ui/label';
+import { getNumberOfWeekdays } from '@/lib/date';
 const ExcelJS = require('exceljs');
 
-const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pegawaiData: any; role: string }) => {
-  const [reportMonth, setReportMonth] = useState<string>(`${Number((new Date).getMonth()) + 1}`);
-  const [reportYear, setReportYear] = useState<string>(`${(new Date).getFullYear()}`);
-  const [selectedDate, setSelectedDate] = useState<string>(`${reportYear}-${reportMonth}`);
+const AbsensiTable = ({ absensiData, pegawaiData, waktuMasukMaksimal, waktuPulang, reportParameters, role }: { absensiData: any, pegawaiData: any; waktuMasukMaksimal: string; waktuPulang: string; reportParameters: Array<string>; role: string }) => {
   const [reportData, setReportData] = useState<any[]>([]);
 
-  const handleSelectMonthChange = (value: string) => {
-    setReportMonth(value);
-    setSelectedDate(`${reportYear}-${value}`);
+  const [reportStartDay, setReportStartDay] = useState<string>(`${(new Date).getDate()}`);
+  const [reportStartMonth, setReportStartMonth] = useState<string>(`${Number((new Date).getMonth()) + 1}`);
+  const [reportStartYear, setReportStartYear] = useState<string>(`${(new Date).getFullYear()}`);
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(`${reportStartYear}-${reportStartMonth}-${reportStartDay}`);
+
+  const handleSelectStartDayChange = (value: string) => {
+    setReportStartDay(value);
+    setSelectedStartDate(`${reportStartYear}-${reportStartMonth}-${value}`);
   }
 
-  const handleSelectYearChange = (value: string) => {
-    setReportYear(value);
-    setSelectedDate(`${value}-${reportMonth}`);
+  const handleSelectStartMonthChange = (value: string) => {
+    setReportStartMonth(value);
+    setSelectedStartDate(`${reportStartYear}-${value}-${reportStartDay}`);
+  }
+
+  const handleSelectStartYearChange = (value: string) => {
+    setReportStartYear(value);
+    setSelectedStartDate(`${value}-${reportStartMonth}-${reportStartDay}`);
+  }
+  
+  const [reportEndDay, setReportEndDay] = useState<string>(`${(new Date).getDate()}`);
+  const [reportEndMonth, setReportEndMonth] = useState<string>(`${Number((new Date).getMonth()) + 1}`);
+  const [reportEndYear, setReportEndYear] = useState<string>(`${(new Date).getFullYear()}`);
+  const [selectedEndDate, setSelectedEndDate] = useState<string>(`${reportEndYear}-${reportEndMonth}-${reportEndDay}`);
+
+  const handleSelectEndDayChange = (value: string) => {
+    setReportEndDay(value);
+    setSelectedEndDate(`${reportEndYear}-${reportEndMonth}-${value}`);
+  }
+
+  const handleSelectEndMonthChange = (value: string) => {
+    setReportEndMonth(value);
+    setSelectedEndDate(`${reportEndYear}-${value}-${reportEndDay}`);
+  }
+
+  const handleSelectEndYearChange = (value: string) => {
+    setReportEndYear(value);
+    setSelectedEndDate(`${value}-${reportEndMonth}-${reportEndDay}`);
   }
 
   useEffect(() => {
     const fetchReportData = async () => {
-      const data = await processData(pegawaiData, selectedDate);
+      const data = await processData(pegawaiData, selectedStartDate, selectedEndDate, waktuMasukMaksimal, waktuPulang, reportParameters);
       setReportData(data);
     };
 
     fetchReportData();
-  }, [selectedDate, pegawaiData]);
+  }, [selectedStartDate, pegawaiData]);
+
+  useEffect(() => {
+    const fetchReportData = async () => {
+      const data = await processData(pegawaiData, selectedStartDate, selectedEndDate, waktuMasukMaksimal, waktuPulang, reportParameters);
+      setReportData(data);
+    };
+
+    fetchReportData();
+  }, [selectedEndDate, pegawaiData]);
+
 
   const exportExcelFile = () => {
     const workbook = new ExcelJS.Workbook();
@@ -112,7 +149,7 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `Data Absensi ${selectedDate}.xlsx`;
+      link.download = `Data Absensi ${selectedStartDate} s/d ${selectedEndDate}.xlsx`;
       link.click();
     });
   };
@@ -126,19 +163,34 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
             <DialogTrigger asChild>
               <Button className='shadow-xl bg-green hover:bg-green/80 rounded-full text-white text-md'><span className='hidden sm:inline mr-1'>Export</span><IoDownloadOutline size={25} /></Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-white rounded-xl">
+            <DialogContent className="sm:max-w-[425px] bg-light-blue text-blue rounded-xl">
               <DialogHeader>
                 <DialogTitle>Export Absensi Data</DialogTitle>
                 <DialogDescription>
-                  Insert the Month and Year of the data you want to export!
+                  Insert the start date and the end date of the data you want to export!
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <h1 className='font-bold'>Start Date</h1>
+              <div className="grid grid-cols-3 gap-4">
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="month" className="">
-                    Month
-                  </Label>
-                  <Select name="month" onValueChange={handleSelectMonthChange} defaultValue={(Number((new Date).getMonth() + 1)).toString()}>
+                  <Select name="day" onValueChange={handleSelectStartDayChange} defaultValue={reportStartDay}>
+                    <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
+                      <SelectValue placeholder="Day" />
+                    </SelectTrigger>
+                    <SelectContent className='rounded-xl border-1 border-orange shadow-md bg-light-orange text-orange'>
+                      <SelectGroup>
+                        <SelectLabel>Day</SelectLabel>
+                        {Array.from({ length: 31 }, (_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()} className="hover:cursor-pointer">
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Select name="month" onValueChange={handleSelectStartMonthChange} defaultValue={reportStartMonth}>
                     <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
                       <SelectValue placeholder="Month" />
                     </SelectTrigger>
@@ -186,10 +238,92 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
                   </Select>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="year" className="">
-                    Year
-                  </Label>
-                  <Select name="year" onValueChange={handleSelectYearChange} defaultValue={reportYear}>
+                  <Select name="year" onValueChange={handleSelectStartYearChange} defaultValue={reportStartYear}>
+                    <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
+                      <SelectValue placeholder="Year" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-1 border-orange shadow-md bg-light-orange text-orange">
+                      <SelectGroup>
+                        <SelectLabel>Year</SelectLabel>
+                        {Array.from({ length: 5 }, (_, i) => i + Number((new Date).getFullYear()) - 4).map((year) => (
+                          <SelectItem key={year} value={year.toString()} className="hover:cursor-pointer">
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <h1 className='font-bold'>End Date</h1>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex items-center gap-4">
+                  <Select name="day" onValueChange={handleSelectEndDayChange} defaultValue={reportEndDay}>
+                    <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
+                      <SelectValue placeholder="Day" />
+                    </SelectTrigger>
+                    <SelectContent className='rounded-xl border-1 border-orange shadow-md bg-light-orange text-orange'>
+                      <SelectGroup>
+                        <SelectLabel>Day</SelectLabel>
+                        {Array.from({ length: 31 }, (_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()} className="hover:cursor-pointer">
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Select name="month" onValueChange={handleSelectEndMonthChange} defaultValue={reportEndMonth}>
+                    <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
+                      <SelectValue placeholder="Month" />
+                    </SelectTrigger>
+                    <SelectContent className='rounded-xl border-1 border-orange shadow-md bg-light-orange text-orange'>
+                      <SelectGroup>
+                        <SelectLabel>Month</SelectLabel>
+                        <SelectItem value="1" className="hover:cursor-pointer">
+                          January
+                        </SelectItem>
+                        <SelectItem value="2" className="hover:cursor-pointer">
+                          February
+                        </SelectItem>
+                        <SelectItem value="3" className="hover:cursor-pointer">
+                          March
+                        </SelectItem>
+                        <SelectItem value="4" className="hover:cursor-pointer">
+                          April
+                        </SelectItem>
+                        <SelectItem value="5" className="hover:cursor-pointer">
+                          May
+                        </SelectItem>
+                        <SelectItem value="6" className="hover:cursor-pointer">
+                          June
+                        </SelectItem>
+                        <SelectItem value="7" className="hover:cursor-pointer">
+                          July
+                        </SelectItem>
+                        <SelectItem value="8" className="hover:cursor-pointer">
+                          August
+                        </SelectItem>
+                        <SelectItem value="9" className="hover:cursor-pointer">
+                          September
+                        </SelectItem>
+                        <SelectItem value="10" className="hover:cursor-pointer">
+                          October
+                        </SelectItem>
+                        <SelectItem value="11" className="hover:cursor-pointer">
+                          November
+                        </SelectItem>
+                        <SelectItem value="12" className="hover:cursor-pointer">
+                          December
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Select name="year" onValueChange={handleSelectEndYearChange} defaultValue={reportEndYear}>
                     <SelectTrigger className="rounded-xl focus:border-2 focus:border-orange placeholder:text-black/50">
                       <SelectValue placeholder="Year" />
                     </SelectTrigger>
@@ -234,7 +368,7 @@ const AbsensiTable = ({ absensiData, pegawaiData, role }: { absensiData: any, pe
               <TableCell className="w-fit text-center">{index + 1}</TableCell>
               <TableCell>{formatter(absensi.waktuMasuk.toString())}</TableCell>
               <TableCell>{absensi.pegawai?.namaPegawai}</TableCell>
-              <TableCell><Badge className={(checkStatus(absensi.waktuMasuk).status === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk).status === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk).status}</Badge></TableCell>
+              <TableCell><Badge className={(checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status}</Badge></TableCell>
               {role === 'ADMIN' && <TableCell>
                 <div className="flex space-x-2">
                   <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white shadow-xl">Edit</Button></Link>

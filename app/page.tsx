@@ -6,7 +6,7 @@ import React from 'react';
 import AbsensiTable from "@/components/table/AbsensiTable";
 import { User } from "@prisma/client";
 import { fetchAllPegawai, getPegawaiById } from "@/action/pegawai";
-import { processData } from '@/lib/report';
+import { getSettingsValueByName, getReportParameters } from "@/action/settings";
 
 const Home = async ({ searchParams }: { searchParams: { query?: string, date?: string } }) => {
   const session = await getSession();
@@ -35,11 +35,16 @@ const Home = async ({ searchParams }: { searchParams: { query?: string, date?: s
     pegawaiData.push(await getPegawaiById(userData.pegawaiId));
   }
 
+  const waktuMasukMaksimal = await getSettingsValueByName('waktuMasukMaksimal') || {value: '07:25'};
+  const waktuPulang = await getSettingsValueByName('waktuPulang') || {value: '16:00'};
+
+  const reportParameters = await getReportParameters();
+
   return (
     <div className="pt-20 sm:pt-28 px-[10vw]">
       <div className="py-8">
         <h1 className="font-bold text-2xl sm:text-3xl mb-4 sm:mb-2">Welcome, <span className="text-orange">{userData?.pegawai.namaPegawai}!</span></h1>
-        <AbsensiTable absensiData={absensiData} pegawaiData={pegawaiData} role={(user as User).role} />
+        <AbsensiTable absensiData={absensiData} pegawaiData={pegawaiData} waktuMasukMaksimal={waktuMasukMaksimal.value} waktuPulang={waktuPulang.value} reportParameters={reportParameters} role={(user as User).role} />
       </div>
     </div>
   );
