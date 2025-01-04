@@ -60,3 +60,15 @@ model User {
 
   pegawai Pegawai @relation(fields: [pegawaiId], references: [id], onDelete: Cascade)
 }
+
+model WebSettings {
+  name    String    @id
+  value   String
+}
+
+model WebLog {
+  id          String    @id @default(cuid())
+  type        String
+  message     String
+  createdAt   DateTime  @default(now())
+}
