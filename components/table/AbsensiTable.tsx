@@ -356,21 +356,21 @@ const AbsensiTable = ({ absensiData, pegawaiData, waktuMasukMaksimal, waktuPulan
         <TableHeader>
           <TableRow className="font-bold">
             <TableHead className="w-[5%] font-bold text-center">No</TableHead>
-            <TableHead className="font-bold">Tanggal</TableHead>
-            <TableHead className="font-bold">Nama Pegawai</TableHead>
-            <TableHead className="font-bold">Status</TableHead>
-            {role === 'ADMIN' && <TableHead className="font-bold">Action</TableHead>}
+            <TableHead className="font-bold text-center">Tanggal</TableHead>
+            <TableHead className="font-bold text-center">Nama Pegawai</TableHead>
+            <TableHead className="font-bold text-center">Status</TableHead>
+            {role === 'ADMIN' && <TableHead className="font-bold text-center">Action</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
           {absensiData?.map((absensi: { id: number; waktuMasuk: DateTime; pegawai: { namaPegawai: string }; }, index: number) => (
             <TableRow key={absensi.id}>
               <TableCell className="w-fit text-center">{index + 1}</TableCell>
-              <TableCell>{formatter(absensi.waktuMasuk.toString())}</TableCell>
-              <TableCell>{absensi.pegawai?.namaPegawai}</TableCell>
-              <TableCell><Badge className={(checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status}</Badge></TableCell>
+              <TableCell className='text-center'>{formatter(absensi.waktuMasuk.toString())}</TableCell>
+              <TableCell className='text-center'>{absensi.pegawai?.namaPegawai}</TableCell>
+              <TableCell className='text-center'><Badge className={(checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Tepat Waktu" ? "border-2 border-green text-green text-md px-4 py-2" : checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status === "Terlambat" ? "border-2 border-red-600 text-red-600 text-md px-4 py-2" : "border-2 border-blue text-blue text-md px-4 py-2") + ' text-center'}>{checkStatus(absensi.waktuMasuk, waktuMasukMaksimal, waktuPulang).status}</Badge></TableCell>
               {role === 'ADMIN' && <TableCell>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 justify-center">
                   <Link href={`/editAbsensi/${absensi.id}`}><Button className="bg-green hover:bg-green/80 rounded-2xl text-white shadow-xl">Edit</Button></Link>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>

@@ -47,6 +47,12 @@ const components: { title: string; href: string; description: string }[] = [
             "Data User",
     },
     {
+        title: "Log",
+        href: "/dataLog",
+        description:
+            "Data Log",
+    },
+    {
         title: "Settings",
         href: "/settings",
         description:

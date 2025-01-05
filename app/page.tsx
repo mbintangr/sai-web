@@ -15,12 +15,12 @@ const Home = async ({ searchParams }: { searchParams: { query?: string, date?: s
   if (!user) {
     redirect('/login');
   }
-
+  
   const date = searchParams?.date || "";
   const query = searchParams?.query || "";
   const userId = user?.id as string || "";
   let userData = await getUserByUserId(userId);
-
+  
   if (!userData) {
     throw new Error("User Data not found");
   }

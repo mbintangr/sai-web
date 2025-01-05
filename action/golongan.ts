@@ -7,4 +7,9 @@ const fetchAllGolongan = async (query?: string) => {
     return golongan
 }
 
-export { fetchAllGolongan }
+const getGolonganById = async (id: number) => {
+    const golongan = await db.golongan.findUnique({ where: { id } })
+    return golongan
+}
+
+export { fetchAllGolongan, getGolonganById }

@@ -7,6 +7,8 @@ import { signIn } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { Prisma, User } from "@prisma/client";
 import { z } from "zod";
+import { addLog } from "./log";
+import { getPegawaiById } from "./pegawai";
 
 const UserLoginSchema = z.object({
     username: z.string().min(1, {message: "Username is required"}),
@@ -123,9 +125,12 @@ const register = async (prevState: any, formData: FormData) => {
         }
     })
 
+    const pegawaiData = await getPegawaiById(Number(pegawaiId))
+
     if (!user) {
         throw new Error("Failed to create user");
     } else {
+        addLog("CREATE", `user with value {"username" : "${username}", "password" : "${password}", "role" : "${role}", {"pegawaiId" : "${pegawaiData?.id}", "pegawaiName" : "${pegawaiData?.namaPegawai}"}}`);
         revalidatePath("/dataUser");
         redirect("/dataUser");
     }
@@ -149,6 +154,9 @@ const updateUser = async (prevState: any, formData: FormData) => {
     const rePassword = validatedFields.data.rePassword as string;
     const role = validatedFields.data.role as User["role"];
 
+    const pegawaiData = await getPegawaiById(Number(pegawaiId))
+    const prevUser = await getUserByUserId(id);
+
     const user = await db.user.update({
         where: {
             id
@@ -160,8 +168,10 @@ const updateUser = async (prevState: any, formData: FormData) => {
             pegawaiId: Number(pegawaiId)
         }
     })
+    
 
     if (user) {
+        addLog("UPDATE", `user from value {"username" : "${prevUser?.username}", "password" : "${prevUser?.password}", "role" : "${prevUser?.role}", {"pegawaiId" : "${prevUser?.pegawaiId}", "pegawaiName" : "${prevUser?.pegawai.namaPegawai}"}} to value {"username" : "${username}", "password" : "${password}", "role" : "${role}", {"pegawaiId" : "${pegawaiId}", "pegawaiName" : "${pegawaiData?.namaPegawai}"}}`);
         revalidatePath("/dataUser")
         redirect("/dataUser")
     } else {
@@ -212,6 +222,7 @@ const getUserByUserId = async (userId: string) => {
 }
 
 const deleteUserByUserId = async (id: string) => {
+    const prevUser = await getUserByUserId(id);
     const user = await db.user.delete({
         where: {
             id
@@ -219,6 +230,7 @@ const deleteUserByUserId = async (id: string) => {
     })
 
     if (user) {
+        addLog('DELETE', `user with username: ${prevUser?.username}`);
         revalidatePath("/")
     } else {
         throw new Error("Failed to delete user");

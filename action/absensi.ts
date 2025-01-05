@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { getUserByUserId } from "./user";
+import { getSession } from "@/lib/getSession";
+import { addLog } from "./log";
+import { getPegawaiById } from "./pegawai";
 
 const fetchAbsensiByPegawaiId = async (id: number, date?: string) => {
     const whereClause: Prisma.AbsensiWhereInput = {
@@ -127,13 +131,18 @@ const fetchAllAbsensi = async (query?: string, date?: string) => {
 
 
 const deleteAbsensiById = async (id: number) => {
+    const prevAbsensi = await getAbsensiById(id);
+
     const absensi = await db.absensi.delete({
         where: {
             id
         }
     })
 
-    revalidatePath("/")
+    if (absensi) {
+        addLog('DELETE', `absensi with value {"namaPegawai" : "${prevAbsensi?.pegawai?.namaPegawai}", "waktuMasuk" : "${prevAbsensi?.waktuMasuk}"}`);
+        revalidatePath("/")
+    }
 }
 
 const AbsensiSchema = z.object({
@@ -159,8 +168,16 @@ const updateAbsensiById = async (prevState: any, formData: FormData) => {
     const tanggalWaktuMasuk = validatedFields.data?.tanggalWaktuMasuk as string;
     const jamWaktuMasuk = validatedFields.data?.jamWaktuMasuk as string;
     const id = Number(formData.get("absensiId") as string);
-
+    
+    const prevAbsensi = await getAbsensiById(id) || {waktuMasuk: new Date()};
+    
     const waktuMasuk = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
+
+    const waktuMasukStr = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
+    waktuMasukStr.setHours(waktuMasukStr.getHours() - 7);
+
+    const prevWaktuMasukStr = prevAbsensi.waktuMasuk;
+    prevWaktuMasukStr.setHours(prevWaktuMasukStr.getHours() - 7);
 
     const absensi = await db.absensi.update({
         where: { 
@@ -172,6 +189,7 @@ const updateAbsensiById = async (prevState: any, formData: FormData) => {
     });
 
     if (absensi) {
+        addLog('UPDATE', `absensi with id ${id} from value {"waktuMasuk" : "${prevWaktuMasukStr}"} to {"waktuMasuk" : "${waktuMasukStr}"}`);
         revalidatePath("/")
         redirect("/");
     } else {
@@ -195,6 +213,11 @@ const addAbsensi = async (prevState: any, formData: FormData) => {
 
     const waktuMasuk = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
 
+    const waktuMasukStr = new Date(`${tanggalWaktuMasuk}T${jamWaktuMasuk}Z`);
+    waktuMasukStr.setHours(waktuMasukStr.getHours() - 7);
+
+    const pegawaiData = await getPegawaiById(pegawaiId);
+
     const absensi = await db.absensi.create({
         data: {
             pegawaiId: pegawaiId,
@@ -203,6 +226,7 @@ const addAbsensi = async (prevState: any, formData: FormData) => {
     });
 
     if (absensi) {
+        addLog('CREATE', `absensi for pegawai ${pegawaiData?.namaPegawai} with value {"waktuMasuk" : "${waktuMasukStr}"}`);
         revalidatePath("/")
         redirect("/")
     } else {

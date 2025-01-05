@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { addLog } from "./log";
 
 const getSettingsValueByName = async (variableName: string) => {
     const webSettings = await db.webSettings.findUnique({
@@ -67,11 +68,6 @@ const getReportParameters = async () => {
     return reportParameters
 }
 
-const getAllSettings = async () => {
-    const webSettings = await db.webSettings.findMany({})
-    return webSettings
-}
-
 const AbsensiSettingsSchema = z.object({
     waktuMasukMaksimal: z.string().min(1, {message: "Waktu Masuk Maksimal is required"}),
     waktuPulang: z.string().min(1, {message: "Waktu Pulang is required"}),
@@ -92,6 +88,9 @@ const updateAbsensiSettings = async (prevState: any, formData: FormData) => {
     const waktuMasukMaksimal = waktuMasukMaksimalStr + ':00.000';
     const waktuPulang = waktuPulangStr + ':00.000';
 
+    const prevWaktuMasukMaksimal = await getSettingsValueByName('waktuMasukMaksimal') || {value: 'N/A'};
+    const prevWaktuPulang = await getSettingsValueByName('waktuPulang') || {value: 'N/A'};
+
     const newWaktuMasukMaksimal = await db.webSettings.update({
         where: {
             name: "waktuMasukMaksimal"
@@ -111,6 +110,7 @@ const updateAbsensiSettings = async (prevState: any, formData: FormData) => {
     })
 
     if (newWaktuMasukMaksimal && newWaktuPulang) {
+        addLog('UPDATE', `absensi settings from {"waktuMasukMaksimal" : "${prevWaktuMasukMaksimal.value}", "waktuPulang" : "${prevWaktuPulang.value}"} to {"waktuMasukMaksimal" : "${waktuMasukMaksimal}", "waktuPulang" : "${waktuPulang}"}`);
         revalidatePath('/settings');
         redirect('/settings');
     } else {
@@ -142,6 +142,8 @@ const updateKalkulasiSettings = async (prevState: any, formData: FormData) => {
     const potonganKeterlambatanPerMenit = validatedFields.data?.potonganKeterlambatanPerMenit as string;
     const potonganKetidakhadiranPerHari = validatedFields.data?.potonganKetidakhadiranPerHari as string;
     const jumlahJamPerHari = validatedFields.data?.jumlahJamPerHari as string;
+
+    const [prevPotonganYangDiToleransi, prevPotonganKeterlambatanPerMenit, prevPotonganKetidakhadiranPerHari, prevJumlahJamPerHari] = await getReportParameters();
 
     const newPotonganYangDiToleransi = await db.webSettings.update({
         where: {
@@ -180,6 +182,7 @@ const updateKalkulasiSettings = async (prevState: any, formData: FormData) => {
     })
 
     if (newPotonganYangDiToleransi && newPotonganKeterlambatanPerMenit && newPotonganKetidakhadiranPerHari && newJumlahJamPerHari) {
+        addLog('UPDATE', `kalkulasi settings from {"potonganYangDiToleransi" : "${prevPotonganYangDiToleransi}", "potonganKeterlambatanPerMenit" : "${prevPotonganKeterlambatanPerMenit}", "potonganKetidakhadiranPerHari" : "${prevPotonganKetidakhadiranPerHari}", "jumlahJamPerHari" : "${prevJumlahJamPerHari}"} to {"potonganYangDiToleransi" : "${potonganYangDiToleransi}", "potonganKeterlambatanPerMenit" : "${potonganKeterlambatanPerMenit}", "potonganKetidakhadiranPerHari" : "${potonganKetidakhadiranPerHari}", "jumlahJamPerHari" : "${jumlahJamPerHari}"}`);
         revalidatePath('/settings');
         redirect('/settings');
     } else {
