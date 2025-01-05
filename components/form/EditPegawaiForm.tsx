@@ -98,7 +98,6 @@ const EditDataPegawai = ({ dataPegawai, dataGolongan }: { dataPegawai: any, data
                             type="number"
                         />
                     </div>
-                    <p className='text-red-600 text-right text-xs'>{state?.error?.pin}</p>
                     
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-x-4 sm:space-y-0">
                         <Label htmlFor="tanggalMulaiKerja">Tanggal Mulai Kerja:</Label>
