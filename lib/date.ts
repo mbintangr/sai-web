@@ -1,5 +1,3 @@
-import { getSettingsValueByName } from "@/action/settings";
-
 const formatter = (dateStr: string) => {
     const date = new Date(dateStr);
 
@@ -65,29 +63,6 @@ const extractYear = (dateStr: string) => {
 
     return localDate.getFullYear();
 }
-
-// function getNumberOfWeekdays(dateStr: string): number {
-//     let weekdaysCount = 0;
-  
-//     // Parse the date string to get the year and month
-//     const [year, month] = dateStr.split('-').map(Number);
-  
-//     // Note: JavaScript's Date object uses zero-based months (0 for January, 11 for December)
-//     const date = new Date(year, month - 1, 1);
-  
-//     // Iterate through each day of the month
-//     while (date.getMonth() === month - 1) {
-//       const day = date.getDay();
-//       // Check if the day is a weekday (Monday to Friday)
-//       if (day !== 0 && day !== 6) {
-//         weekdaysCount++;
-//       }
-//       // Move to the next day
-//       date.setDate(date.getDate() + 1);
-//     }
-  
-//     return weekdaysCount;
-//   }
 
 function getNumberOfWeekdays(startDateStr: string, endDateStr: string): number {
   let weekdaysCount = 0;
