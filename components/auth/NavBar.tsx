@@ -13,7 +13,6 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
-import { cn } from '@/lib/utils'
 import ListItem from '../ui/list-item'
 import { User } from '@prisma/client'
 import {
@@ -34,6 +33,12 @@ import { IoMenu, IoBriefcaseOutline, IoPersonOutline } from "react-icons/io5";
 
 
 const components: { title: string; href: string; description: string }[] = [
+    {
+        title: "Absensi",
+        href: "/",
+        description:
+            "Data Absensi",
+    },
     {
         title: "Pegawai",
         href: "/dataPegawai",
