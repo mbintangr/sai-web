@@ -85,7 +85,7 @@ const SettingsForm = ({ waktuMasukMaksimal, waktuPulang, reportParameters }: Set
                         />
                     </div>
                     <div className="w-full flex items-center justify-start">
-                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>
+                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit" onClick={() => {alert('Settings updated successfully');}}>Save</Button>
                     </div>
                 </div>
             </form>
@@ -162,7 +162,7 @@ const SettingsForm = ({ waktuMasukMaksimal, waktuPulang, reportParameters }: Set
                         <p className='text-red-600 text-xs'>{stateKalkulasi?.error?.jumlahJamPerHari}</p>
                     </div>
                     <div className="w-full flex items-center justify-start">
-                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit">Save</Button>
+                        <Button className="bg-orange hover:bg-orange/80 text-white rounded-full w-fit px-4" type="submit" onClick={() => {alert('Settings updated successfully');}}>Save</Button>
                     </div>
                 </div>
             </form>
