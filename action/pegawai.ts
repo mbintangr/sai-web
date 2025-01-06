@@ -124,18 +124,33 @@ const updatePegawaiById = async (prevState: any, formData: FormData) => {
     const prevPin = prevPegawaiData?.pin as number;
     const prevMulaiKerja = prevPegawaiData?.mulaiKerja as Date;
 
-    const pegawai = await db.pegawai.update({
-        where: {
-            id: Number(id),
-        },
-        data: {
-            namaPegawai,
-            pendidikan,
-            golonganId,
-            pin,
-            mulaiKerja
-        }
-    });
+    let pegawai;
+    if (pin !== 0) {
+        pegawai = await db.pegawai.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                namaPegawai,
+                pendidikan,
+                golonganId,
+                pin,
+                mulaiKerja
+            }
+        });
+    } else {
+        pegawai = await db.pegawai.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                namaPegawai,
+                pendidikan,
+                golonganId,
+                mulaiKerja
+            }
+        });
+    }
 
     if (pegawai) {
         addLog('UPDATE', `pegawai with id ${id} from value {"namaPegawai" : "${prevNamaPegawai}", "pendidikan" : "${prevPendidikan}", "golongan" : "${prevGolongan}", "pin" : "${prevPin}", "mulaiKerja" : "${prevMulaiKerja}"} to value {"namaPegawai" : "${namaPegawai}", "pendidikan" : "${pendidikan}", "golongan" : "${golonganData?.namaGolongan}", "pin" : "${pin}", "mulaiKerja" : "${mulaiKerja}"}`);
